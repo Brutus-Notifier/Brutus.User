@@ -6,4 +6,9 @@ namespace Brutus.Service.User.WebJob.Services
     {
         Task Send(string emailAdress, string message);
     }
+
+    public class FakeEmailService : IEmailService
+    {
+        public Task Send(string emailAdress, string message) => Task.CompletedTask;
+    }
 }

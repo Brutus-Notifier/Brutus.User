@@ -1,5 +1,6 @@
 using System;
 using Automatonymous;
+using Brutus.Service.User.Contracts.Commands;
 using Brutus.Service.User.Contracts.Events;
 using Brutus.Service.User.Domain.Events;
 using GreenPipes;
@@ -19,16 +20,26 @@ namespace Brutus.Service.User.WebJob.Sagas
         public Event<UserActivated> UserActivatedEvent { get; private set; }
         public Event<UserConfirmationEmailSent> UserConfirmationEmailSentEvent { get; private set; }
         public Event<UserEmailConfirmed> UserEmailConfirmedEvent { get; private set; }
+        public Event<ConfirmUserEmail> ConfirmUserEmailCommand { get; private set; }
 
         public CreateUserStateMachine()
         {
             Event(() => UserCreatedEvent, x=> x.CorrelateById(m => m.Message.UserId));
             Event(() => UserConfirmationEmailSentEvent, x => x.CorrelateById(m => m.Message.UserId));
             Event(() => UserActivatedEvent, x => x.CorrelateById(m=> m.Message.UserId));
+            Event(() => ConfirmUserEmailCommand, x =>
+            {
+                x.CorrelateById(m => m.Message.UserId);
+                x.OnMissingInstance(m => m.ExecuteAsync(async context =>
+                {
+                    if (context.RequestId.HasValue)
+                        await context.RespondAsync(new UserEmailConfirmationFailed(context.Message.UserId, "User not found!"));
+                }));
+            });
+            
             InstanceState( x => x.CurrentState);
             
-            Initially(When(UserCreatedEvent)
-                .TransitionTo(Submitted));
+            Initially(When(UserCreatedEvent).TransitionTo(Submitted));
             
             During(Submitted, 
                 Ignore(UserCreatedEvent),
@@ -42,19 +53,23 @@ namespace Brutus.Service.User.WebJob.Sagas
             During(ConfirmationEmailSent,
                 Ignore(UserCreatedEvent),
                 Ignore(UserConfirmationEmailSentEvent),
-                When(UserEmailConfirmedEvent)
+                When(ConfirmUserEmailCommand)
                     .Then(context =>
                     {
-                        // TODO: Get the code from the state
-                        // and compare with the code from the message
-                        // if OK, then send the ActivateUser command
-                        // and wait for the response which will proxy further as reponse
-                        // otherwise - send confirmation failed event as response
-                    }));
+                        if (context.Instance.EmailConfirmationCode == context.Data.ConfirmationCode)
+                            context.Respond(new UserEmailConfirmed(context.Data.UserId));
+                        else
+                            context.Respond(new UserEmailConfirmationFailed(context.Data.UserId,
+                                "Incorrect confirmation code!"));
+                    }),
+                When(UserEmailConfirmedEvent)
+                    .TransitionTo(Finished));
             
             During(Finished,
                 Ignore(UserCreatedEvent),
-                Ignore(UserConfirmationEmailSentEvent));
+                Ignore(UserConfirmationEmailSentEvent),
+                Ignore(ConfirmUserEmailCommand),
+                Ignore(UserEmailConfirmedEvent));
         }
     }
 

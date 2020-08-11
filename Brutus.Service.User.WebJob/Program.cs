@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Brutus.Service.User.WebJob.Consumers;
 using Brutus.Service.User.WebJob.Sagas;
+using Brutus.Service.User.WebJob.Services;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +28,8 @@ namespace Brutus.Service.User.WebJob
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddTransient<IEmailService, FakeEmailService>();
+                    
                     services.AddMassTransit(x =>
                     {
                         x.AddConsumers(typeof(CreateUserConsumer).Assembly);

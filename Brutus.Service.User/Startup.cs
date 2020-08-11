@@ -1,4 +1,5 @@
 using Brutus.Service.User.Contracts;
+using Brutus.Service.User.Contracts.Commands;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +32,7 @@ namespace Brutus.Service.User
             services.AddMassTransit(cfg =>
             {
                 cfg.UsingRabbitMq();
+                cfg.AddRequestClient<ConfirmUserEmail>();
             });
             services.AddMassTransitHostedService();
         }

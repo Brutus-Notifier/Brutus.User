@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Brutus.Core;
@@ -9,12 +8,17 @@ namespace Brutus.User.CommandHandlers
 {
     public class CreateUserCommandHandler: ICommandHandler<Commands.V1.CreateUser>
     {
-        public Task<Unit> Handle(Commands.V1.CreateUser request, CancellationToken cancellationToken)
+        private IRepository<Domain.User> _repository;
+        public CreateUserCommandHandler(IRepository<Domain.User> repository)
+        {
+            _repository = repository;
+        }
+        public async Task<Unit> Handle(Commands.V1.CreateUser request, CancellationToken cancellationToken)
         {
             Domain.User user = new Domain.User(request.UserId);
-            Console.WriteLine("HANDLED");
             
-            return Task.FromResult(Unit.Value);
+            await _repository.Add(user);
+            return Unit.Value;
         }
     }
 }

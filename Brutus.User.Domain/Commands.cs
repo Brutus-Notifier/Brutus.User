@@ -7,7 +7,7 @@ namespace Brutus.User.Domain
     {
         public static class V1
         {
-            public class ChangeUserName
+            public class ChangeUserName: ICommand
             {
                 public Guid UserId { get; set; }
                 public string UserName { get; set; }

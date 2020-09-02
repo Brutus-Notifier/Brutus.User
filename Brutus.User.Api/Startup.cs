@@ -28,7 +28,7 @@ namespace Brutus.User.Api
         {
             services.AddControllers();
             services.AddMediatR(typeof(Startup));
-            services.AddBrutusUserService();
+            services.AddBrutusUserService(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

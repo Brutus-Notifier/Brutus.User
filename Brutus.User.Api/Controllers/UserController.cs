@@ -22,8 +22,15 @@ namespace Brutus.User.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost]
-        public async Task Post(Commands.V1.CreateUser command)
+        [HttpPost("create")]
+        public async Task CreateUser(Commands.V1.CreateUser command)
+        {
+            await _mediator.Send(command);
+        }
+
+        [HttpPut]
+        [Route("change-name")]
+        public async Task ChangeName(Commands.V1.ChangeUserName command)
         {
             await _mediator.Send(command);
         }

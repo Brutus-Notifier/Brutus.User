@@ -29,6 +29,8 @@ namespace Brutus.User.Api
             services.AddControllers();
             services.AddMediatR(typeof(Startup));
             services.AddBrutusUserService(Configuration);
+
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,6 +39,12 @@ namespace Brutus.User.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                
+                app.UseSwagger();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "User Service Api");
+                });
             }
 
             app.UseRouting();

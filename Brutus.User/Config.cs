@@ -21,7 +21,6 @@ namespace Brutus.User
                 
                 settings.Connection(conStr);
                 settings.AutoCreateSchemaObjects = AutoCreate.All;
-                // settings.Events.InlineProjections.AggregateStreamsWith<Domain.User>();
             });
         }
     }

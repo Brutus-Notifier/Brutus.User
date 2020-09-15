@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Brutus.User.Domain;
-using MediatR;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -14,25 +11,25 @@ namespace Brutus.User.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;
-        private readonly IMediator _mediator;
-
-        public UserController(ILogger<UserController> logger, IMediator mediator)
+        private IBus _bus;
+        
+        public UserController(ILogger<UserController> logger, IBus bus)
         {
             _logger = logger;
-            _mediator = mediator;
+            _bus = bus;
         }
 
         [HttpPost("create")]
         public async Task CreateUser(Commands.V1.CreateUser command)
         {
-            await _mediator.Send(command);
+            await _bus.Publish(command);
         }
 
         [HttpPut]
         [Route("change-name")]
         public async Task ChangeName(Commands.V1.ChangeUserName command)
         {
-            await _mediator.Send(command);
+            await _bus.Publish(command);
         }
     }
 }

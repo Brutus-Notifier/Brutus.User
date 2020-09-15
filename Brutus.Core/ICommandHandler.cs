@@ -1,6 +1,6 @@
-using MediatR;
+using MassTransit;
 
 namespace Brutus.Core
 {
-    public interface ICommandHandler<in T>:IRequestHandler<T> where T:ICommand {}
+    public interface ICommandHandler<in T>:IConsumer<T> where T: class, ICommand {}
 }

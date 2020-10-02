@@ -15,8 +15,8 @@ namespace Brutus.User.CommandHandlers
 
         public async Task Consume(ConsumeContext<Commands.V1.CreateUser> context)
         {
-            Domain.User user = new Domain.User(context.Message.UserId);
-            await _repository.Add(user);
+            // Domain.User user = new Domain.User(context.Message.UserId);
+            // await _repository.Add(user);
         }
     }
 }

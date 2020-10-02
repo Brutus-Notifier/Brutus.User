@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Brutus.Core;
 
 namespace Brutus.User.Domain
@@ -11,15 +12,17 @@ namespace Brutus.User.Domain
 
         public int Version { get; set; }
         public Guid Id { get; set; }
-        public string Name { get; private set; }
+        public string FirstName { get; private set; }
+        public string LastName { get; private set; }
+        public string Email { get; private set; }
+
+        public string Status { get; set; }
 
         public User() { }
         
-        public User(Guid id)
+        public User(Guid id, string firstName, string lastName, string email)
         {
-            Events.V1.UserCreated @event = new Events.V1.UserCreated { UserId = id };
-            Enqueue(@event);
-            Apply(@event);
+            Apply(new Events.V1.UserCreated { UserId = id, FirstName = firstName, LastName = lastName, Email = email });
         }
         
         public ICollection<object> DequeueEvents()
@@ -34,21 +37,70 @@ namespace Brutus.User.Domain
             _events.Add(@event);
         }
 
-        public void ChangeName(string name)
+        public void ChangeName(string firstName, string lastName)
         {
-            Events.V1.UserNameChanged @event = new Events.V1.UserNameChanged {UserId = Id, UserName = name};
-            Enqueue(@event);
-            Apply(@event);
+            Apply(new Events.V1.UserNameChanged {UserId = Id, FirstName = firstName, LastName = lastName});
         }
 
-        public void Apply(Events.V1.UserCreated @event)
+        public void Apply(object @event)
+        {
+            switch (@event)
+            {
+                case Events.V1.UserCreated e: When(e); break;
+                case Events.V1.UserNameChanged e: When(e); break;
+                case Events.V1.UserEmailChanged e:  When(e); break;
+                default: throw new NotSupportedException($"Event {@event} is not supported by User");
+            }
+            Enqueue(@event);
+        }
+
+        private void When(Events.V1.UserCreated @event)
         {
             Id = @event.UserId;
+            When(new Events.V1.UserNameChanged{UserId = this.Id, FirstName =  @event.FirstName, LastName = @event.LastName});
+            When(new Events.V1.UserEmailChanged(){UserId = this.Id, Email = @event.Email});
+            Status = UserStatus.Awaiting;
+        }
+        
+        private void When(Events.V1.UserNameChanged @event)
+        {
+            if (string.IsNullOrWhiteSpace(@event.FirstName))
+                throw new ArgumentException($"{nameof(@event.FirstName)} could not be null or empty");
+            if (@event.FirstName.Length > 100)
+                throw new ArgumentException($"{nameof(@event.FirstName)} could not be longer the 100 characters");
+            
+            FirstName = @event.FirstName.Trim();
+            
+            if (string.IsNullOrWhiteSpace(@event.LastName))
+                throw new ArgumentException($"{nameof(@event.LastName)} could not be null or empty");
+            if (@event.LastName.Length > 100)
+                throw new ArgumentException($"{nameof(@event.LastName)} could not be longer the 100 characters");
+            LastName = @event.LastName.Trim();
         }
 
-        public void Apply(Events.V1.UserNameChanged @event)
+        private void When(Events.V1.UserEmailChanged @event)
         {
-            Name = @event.UserName;
+            if (string.IsNullOrWhiteSpace(@event.Email))
+                throw  new ArgumentException($"{nameof(@event.Email)} could not be null or empty");
+            if (@event.Email.Length > 50)
+                throw new ArgumentException($"{nameof(@event.Email)} could not be longer then 50 characters");
+
+            var trimmedEmail = @event.Email.Trim();
+            
+            if(!Regex.IsMatch(trimmedEmail, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase))
+                throw new ArgumentException($"Email {trimmedEmail} is invalid");
+
+            Email = trimmedEmail;
+        }
+
+        public static class UserStatus
+        {
+            public const string Awaiting = "AWAITING";
+        }
+
+        public void ChangeEmail(string userEmail)
+        {
+            Apply(new Events.V1.UserEmailChanged(){ UserId = this.Id, Email = userEmail});
         }
     }
 }

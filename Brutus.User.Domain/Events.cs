@@ -9,12 +9,22 @@ namespace Brutus.User.Domain
             public class UserCreated
             {
                 public Guid UserId { get; set; }
+                public string FirstName { get; set; }
+                public string LastName { get; set; }
+                public string Email { get; set; }
             }
 
             public class UserNameChanged
             {
                 public Guid UserId { get; set; }
-                public string UserName { get; set; }
+                public string FirstName { get; set; }
+                public string LastName { get; set; }
+            }
+
+            public class UserEmailChanged
+            {
+                public Guid UserId { get; set; }
+                public string Email { get; set; }
             }
         }
     }

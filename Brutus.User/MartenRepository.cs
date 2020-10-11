@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Brutus.Core;
@@ -6,7 +7,7 @@ using Marten;
 
 namespace Brutus.User
 {
-    public class MartenRepository<T> : IRepository<T> where T : class, IAggregate, new()
+    public class MartenRepository<T> : IRepository<T> where T : class, IAggregate
     {
         private readonly IDocumentSession _session;
 
@@ -15,23 +16,28 @@ namespace Brutus.User
             _session = session ?? throw new ArgumentNullException(nameof(session));
         }
         
-        public async Task<T> Find(Guid id)
+        public async Task<T> FindAsync(Guid id)
         {
             return await _session.Events.AggregateStreamAsync<T>(id, token: new CancellationToken());
         }
 
-        public async Task Add(T aggregate)
+        public async Task<ICollection<object>> AddAsync(T aggregate)
         {
             _session.Events.StartStream<T>(aggregate.Id);
             var events = aggregate.DequeueEvents();
             _session.Events.Append(aggregate.Id, events);
             await _session.SaveChangesAsync();
+
+            return events;
         }
 
-        public async Task Update(T aggregate)
+        public async Task<ICollection<object>> UpdateAsync(T aggregate)
         {
-            _session.Events.Append(aggregate.Id, aggregate.DequeueEvents());
+            var events = aggregate.DequeueEvents();
+            _session.Events.Append(aggregate.Id, events);
             await _session.SaveChangesAsync();
+
+            return events;
         }
     }
 }

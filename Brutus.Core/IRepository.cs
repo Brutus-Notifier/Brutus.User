@@ -1,12 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Brutus.Core
 {
-    public interface IRepository<T> where T: class, IAggregate, new()
+    public interface IRepository<T> where T: class, IAggregate
     {
-        Task<T> Find(Guid id);
-        Task Add(T aggregate);
-        Task Update(T aggregate);
+        Task<T> FindAsync(Guid id);
+        Task<ICollection<object>> AddAsync(T aggregate);
+        Task<ICollection<object>> UpdateAsync(T aggregate);
     }
 }

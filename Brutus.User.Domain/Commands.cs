@@ -21,6 +21,12 @@ namespace Brutus.User.Domain
                 public string LastName { get; set; }
                 public string Email { get; set; }
             }
+            
+            public class ChangeUserEmail : ICommand
+            {
+                public Guid UserId { get; set; }
+                public string Email { get; set; }
+            }
         }
     }
 }

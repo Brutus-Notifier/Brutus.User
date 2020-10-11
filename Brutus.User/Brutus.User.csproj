@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>Brutus.User.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Marten" Version="3.13.1" />
     <PackageReference Include="MassTransit.AspNetCore" Version="7.0.4" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="7.0.4" />

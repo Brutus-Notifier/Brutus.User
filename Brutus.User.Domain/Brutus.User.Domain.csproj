@@ -4,12 +4,6 @@
     <ProjectReference Include="..\Brutus.Core\Brutus.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>Brutus.User.Domain.Tests</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>

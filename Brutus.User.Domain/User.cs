@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Brutus.Core;
@@ -18,11 +19,11 @@ namespace Brutus.User.Domain
 
         public string Status { get; set; }
 
-        public User() { }
+        private User() { }
         
         public User(Guid id, string firstName, string lastName, string email)
         {
-            Apply(new Events.V1.UserCreated { UserId = id, FirstName = firstName, LastName = lastName, Email = email });
+            Apply(new Events.V1.UserCreated(userId:id, firstName: firstName, lastName: lastName, email: email ));
         }
         
         public ICollection<object> DequeueEvents()
@@ -39,10 +40,15 @@ namespace Brutus.User.Domain
 
         public void ChangeName(string firstName, string lastName)
         {
-            Apply(new Events.V1.UserNameChanged {UserId = Id, FirstName = firstName, LastName = lastName});
+            Apply(new Events.V1.UserNameChanged(userId: Id, firstName: firstName, lastName: lastName));
+        }
+        
+        public void ChangeEmail(string userEmail)
+        {
+            Apply(new Events.V1.UserEmailChanged(userId: this.Id, email: userEmail));
         }
 
-        public void Apply(object @event)
+        private void Apply(object @event)
         {
             switch (@event)
             {
@@ -54,11 +60,12 @@ namespace Brutus.User.Domain
             Enqueue(@event);
         }
 
+        #region Whens
         private void When(Events.V1.UserCreated @event)
         {
             Id = @event.UserId;
-            When(new Events.V1.UserNameChanged{UserId = this.Id, FirstName =  @event.FirstName, LastName = @event.LastName});
-            When(new Events.V1.UserEmailChanged(){UserId = this.Id, Email = @event.Email});
+            When(new Events.V1.UserNameChanged(userId: this.Id, firstName:  @event.FirstName, lastName: @event.LastName));
+            When(new Events.V1.UserEmailChanged(userId: this.Id, email: @event.Email));
             Status = UserStatus.Awaiting;
         }
         
@@ -92,15 +99,11 @@ namespace Brutus.User.Domain
 
             Email = trimmedEmail;
         }
+        #endregion
 
         public static class UserStatus
         {
             public const string Awaiting = "AWAITING";
-        }
-
-        public void ChangeEmail(string userEmail)
-        {
-            Apply(new Events.V1.UserEmailChanged(){ UserId = this.Id, Email = userEmail});
         }
     }
 }

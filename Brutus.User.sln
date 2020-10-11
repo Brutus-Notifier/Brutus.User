@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brutus.Core", "Brutus.Core\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brutus.User.Api", "Brutus.User.Api\Brutus.User.Api.csproj", "{50EC163F-EFE2-4300-870C-553543460D31}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brutus.User.Tests", "Brutus.User.Tests\Brutus.User.Tests.csproj", "{BCEEA6D3-050A-4948-829C-F9E5751BC045}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,5 +88,17 @@ Global
 		{50EC163F-EFE2-4300-870C-553543460D31}.Release|x64.Build.0 = Release|Any CPU
 		{50EC163F-EFE2-4300-870C-553543460D31}.Release|x86.ActiveCfg = Release|Any CPU
 		{50EC163F-EFE2-4300-870C-553543460D31}.Release|x86.Build.0 = Release|Any CPU
+		{BCEEA6D3-050A-4948-829C-F9E5751BC045}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCEEA6D3-050A-4948-829C-F9E5751BC045}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCEEA6D3-050A-4948-829C-F9E5751BC045}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BCEEA6D3-050A-4948-829C-F9E5751BC045}.Debug|x64.Build.0 = Debug|Any CPU
+		{BCEEA6D3-050A-4948-829C-F9E5751BC045}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BCEEA6D3-050A-4948-829C-F9E5751BC045}.Debug|x86.Build.0 = Debug|Any CPU
+		{BCEEA6D3-050A-4948-829C-F9E5751BC045}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCEEA6D3-050A-4948-829C-F9E5751BC045}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCEEA6D3-050A-4948-829C-F9E5751BC045}.Release|x64.ActiveCfg = Release|Any CPU
+		{BCEEA6D3-050A-4948-829C-F9E5751BC045}.Release|x64.Build.0 = Release|Any CPU
+		{BCEEA6D3-050A-4948-829C-F9E5751BC045}.Release|x86.ActiveCfg = Release|Any CPU
+		{BCEEA6D3-050A-4948-829C-F9E5751BC045}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -19,10 +19,7 @@ namespace Brutus.User.CommandHandlers
             user.ChangeEmail(context.Message.Email);
             var events = await _repository.UpdateAsync(user);
 
-            foreach (var @event in events)
-            {
-                await context.Publish(@event);
-            }
+            foreach (var @event in events) await context.Publish(@event);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Brutus.User.Tests
         public UserCreateConsumerTests()
         {
             var userMock = new Mock<IRepository<Domain.User>>();
-            userMock.Setup(repo => repo.AddAsync(It.IsAny<Domain.User>())).Returns<IAggregate>(user => Task.FromResult(user.DequeueEvents()));
+            userMock.Setup(repo => repo.AddAsync(It.IsAny<Domain.User>())).Returns<Aggregate>(user => Task.FromResult(user.DequeueEvents()));
             
             _consumer = Harness.Consumer(() => new CreateUserCommandHandler(userMock.Object));
         }

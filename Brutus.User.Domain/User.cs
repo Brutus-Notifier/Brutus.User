@@ -1,22 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Brutus.Core;
 
 namespace Brutus.User.Domain
 {
-    public class User: IAggregate
+    public class User: Aggregate
     {
-        private readonly IList<object> _events = new List<object>();
-
-        public int Version { get; set; }
-        public Guid Id { get; set; }
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
         public string Email { get; private set; }
-
         public string Status { get; set; }
 
         private User() { }
@@ -24,18 +16,6 @@ namespace Brutus.User.Domain
         public User(Guid id, string firstName, string lastName, string email)
         {
             Apply(new Events.V1.UserCreated(userId:id, firstName: firstName, lastName: lastName, email: email ));
-        }
-        
-        public ICollection<object> DequeueEvents()
-        {
-            var events = _events.ToList();
-            _events.Clear();
-            return events;
-        }
-
-        public void Enqueue(object @event)
-        {
-            _events.Add(@event);
         }
 
         public void ChangeName(string firstName, string lastName)
@@ -48,19 +28,7 @@ namespace Brutus.User.Domain
             Apply(new Events.V1.UserEmailChanged(userId: this.Id, email: userEmail));
         }
 
-        private void Apply(object @event)
-        {
-            switch (@event)
-            {
-                case Events.V1.UserCreated e: When(e); break;
-                case Events.V1.UserNameChanged e: When(e); break;
-                case Events.V1.UserEmailChanged e:  When(e); break;
-                default: throw new NotSupportedException($"Event {@event} is not supported by User");
-            }
-            Enqueue(@event);
-        }
-
-        #region Whens
+        #region When
         private void When(Events.V1.UserCreated @event)
         {
             Id = @event.UserId;

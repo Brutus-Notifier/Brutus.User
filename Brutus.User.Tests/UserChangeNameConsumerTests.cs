@@ -19,7 +19,7 @@ namespace Brutus.User.Tests
             var userMock = new Mock<IRepository<Domain.User>>();
             userMock.Setup(repo => repo.FindAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(new Domain.User(InVar.Id, "testName", "testLastName", "test@email.com"));
-            userMock.Setup(repo => repo.UpdateAsync(It.IsAny<Domain.User>())).Returns<IAggregate>(user => Task.FromResult(user.DequeueEvents()));
+            userMock.Setup(repo => repo.UpdateAsync(It.IsAny<Domain.User>())).Returns<Aggregate>(user => Task.FromResult(user.DequeueEvents()));
             
             _consumer = Harness.Consumer(() => new ChangeUserNameCommandHandler(userMock.Object));
         }

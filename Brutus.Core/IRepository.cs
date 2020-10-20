@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Brutus.Core
 {
-    public interface IRepository<T> where T: class, IAggregate
+    public interface IRepository<T> where T: Aggregate
     {
         Task<T> FindAsync(Guid id);
         Task<ICollection<object>> AddAsync(T aggregate);

@@ -7,7 +7,7 @@ using Marten;
 
 namespace Brutus.User
 {
-    public class MartenRepository<T> : IRepository<T> where T : class, IAggregate
+    public class MartenRepository<T> : IRepository<T> where T : Aggregate
     {
         private readonly IDocumentSession _session;
 

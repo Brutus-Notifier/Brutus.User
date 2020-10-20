@@ -19,10 +19,7 @@ namespace Brutus.User.CommandHandlers
             Domain.User user = new Domain.User(context.Message.UserId, context.Message.FirstName, context.Message.LastName, context.Message.Email);
             var events = await _repository.AddAsync(user);
             
-            foreach (var @event in events)
-            {
-                await context.Publish(@event);
-            }
+            foreach (var @event in events) await context.Publish(@event);
         }
     }
 }

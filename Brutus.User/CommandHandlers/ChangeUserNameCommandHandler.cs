@@ -19,10 +19,7 @@ namespace Brutus.User.CommandHandlers
             aggregate.ChangeName(context.Message.FirstName, context.Message.LastName);
             var events = await _repository.UpdateAsync(aggregate);
 
-            foreach (var @event in events)
-            {
-                await context.Publish(@event);
-            }
+            foreach (var @event in events) await context.Publish(@event);
         }
     }
 }

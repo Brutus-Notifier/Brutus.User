@@ -15,9 +15,11 @@ namespace Brutus.User.CommandHandlers
 
         public async Task Consume(ConsumeContext<Commands.V1.ChangeUserName> context)
         {
-            Domain.User aggregate = await _repository.Find(context.Message.UserId);
-            aggregate.ChangeName(context.Message.UserName);
-            await _repository.Update(aggregate);
+            Domain.User aggregate = await _repository.FindAsync(context.Message.UserId);
+            aggregate.ChangeName(context.Message.FirstName, context.Message.LastName);
+            var events = await _repository.UpdateAsync(aggregate);
+
+            foreach (var @event in events) await context.Publish(@event);
         }
     }
 }

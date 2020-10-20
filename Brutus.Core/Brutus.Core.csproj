@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <PackageReference Include="MassTransit" Version="7.0.4" />
-    <PackageReference Include="MediatR" Version="8.1.0" />
   </ItemGroup>
 
 </Project>

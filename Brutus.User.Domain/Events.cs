@@ -47,6 +47,18 @@ namespace Brutus.User.Domain
                 public Guid UserId { get; }
                 public string Email { get;}
             }
+
+            public class UserEmailConfirmed
+            {
+                public UserEmailConfirmed(Guid userId, string email)
+                {
+                    UserId = userId;
+                    Email = email;
+                }
+                
+                public Guid UserId { get; }
+                public string Email { get; }
+            }
         }
     }
 }

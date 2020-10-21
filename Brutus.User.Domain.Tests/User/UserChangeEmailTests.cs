@@ -41,6 +41,7 @@ namespace Brutus.User.Domain.Tests.User
         {
             _user.ChangeEmail(_userEmail);
             Assert.Equal(_userEmail, _user.Email);
+            Assert.Equal( Domain.User.UserStatus.Pending, _user.Status);
         }
 
         [Theory]
@@ -49,9 +50,7 @@ namespace Brutus.User.Domain.Tests.User
         [InlineData(null)]
         public void ShouldThrowExceptionIfEmailIsEmpty(string userEmail)
         {
-            Action act = () => _user.ChangeEmail(userEmail);
-            ArgumentException exception = Assert.Throws<ArgumentException>(act);
-            
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeEmail(userEmail));
             Assert.Equal("Email could not be null or empty", exception.Message);
         }
 
@@ -59,10 +58,7 @@ namespace Brutus.User.Domain.Tests.User
         public void ShouldThrowExceptionIfEmailLongerThen50Chars()
         {
             var longEmail = "veryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy.long@email.com";
-            
-            Action act = () => _user.ChangeEmail(longEmail);
-            ArgumentException exception = Assert.Throws<ArgumentException>(act);
-            
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeEmail(longEmail));
             Assert.Equal("Email could not be longer then 50 characters", exception.Message);
         }
 
@@ -84,9 +80,7 @@ namespace Brutus.User.Domain.Tests.User
         [InlineData("Abc..123@example.com")]
         public void ShouldThrowExceptionIfEmailIsInvalid(string email)
         {
-            Action act = () => _user.ChangeEmail(email);
-            ArgumentException exception = Assert.Throws<ArgumentException>(act);
-            
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeEmail(email));
             Assert.Equal($"Email {email} is invalid", exception.Message);
         }
         

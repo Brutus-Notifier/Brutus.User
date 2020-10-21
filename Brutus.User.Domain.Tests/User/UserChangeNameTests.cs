@@ -24,6 +24,7 @@ namespace Brutus.User.Domain.Tests.User
             
             Assert.Equal(_userFirstName, _user.FirstName);
             Assert.Equal(_userLastName, _user.LastName);
+            Assert.Equal(Domain.User.UserStatus.Awaiting, _user.Status);
         }
 
         [Fact]
@@ -63,8 +64,7 @@ namespace Brutus.User.Domain.Tests.User
         [InlineData(null)]
         public void ShouldThrowErrorIfFirstNameIsInvalid(string firstName)
         {
-            Action act = () => _user.ChangeName(firstName, _userLastName);
-            ArgumentException exception = Assert.Throws<ArgumentException>(act);
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeName(firstName, _userLastName));
             Assert.Equal("FirstName could not be null or empty", exception.Message);
         }
 
@@ -72,8 +72,7 @@ namespace Brutus.User.Domain.Tests.User
         public void ShouldThrowErrorIfFirstNameIsLongerThen100Chars()
         {
             var firstName = "TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_TEST_LONG_NAME__";
-            Action act = () => _user.ChangeName(firstName, _userLastName);
-            ArgumentException exception = Assert.Throws<ArgumentException>(act);
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeName(firstName, _userLastName));
             Assert.Equal("FirstName could not be longer the 100 characters", exception.Message);
         }
         
@@ -83,8 +82,7 @@ namespace Brutus.User.Domain.Tests.User
         [InlineData(null)]
         public void ShouldThrowErrorIfLastNameIsInvalid(string lastName)
         {
-            Action act = () => _user.ChangeName(_userLastName, lastName);
-            ArgumentException exception = Assert.Throws<ArgumentException>(act);
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeName(_userLastName, lastName));
             Assert.Equal("LastName could not be null or empty", exception.Message);
         }
 
@@ -92,8 +90,7 @@ namespace Brutus.User.Domain.Tests.User
         public void ShouldThrowErrorIfLastNameIsLongerThen100Chars()
         {
             var lastName = "TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_TEST_LONG_NAME__";
-            Action act = () => _user.ChangeName(_userFirstName, lastName);
-            ArgumentException exception = Assert.Throws<ArgumentException>(act);
+            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeName(_userFirstName, lastName));
             Assert.Equal("LastName could not be longer the 100 characters", exception.Message);
         }
     }

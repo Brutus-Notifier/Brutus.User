@@ -27,6 +27,11 @@ namespace Brutus.User.Domain
         {
             Apply(new Events.V1.UserEmailChanged(userId: this.Id, email: userEmail));
         }
+        
+        public void ConfirmEmail(string email)
+        {
+            Apply(new Events.V1.UserEmailConfirmed(userId: this.Id, email));
+        }
 
         #region When
         private void When(Events.V1.UserCreated @event)
@@ -66,12 +71,29 @@ namespace Brutus.User.Domain
                 throw new ArgumentException($"Email {trimmedEmail} is invalid");
 
             Email = trimmedEmail;
+            Status = UserStatus.Pending;
+        }
+        
+        private void When(Events.V1.UserEmailConfirmed @event)
+        {
+            if (string.IsNullOrWhiteSpace(@event.Email))
+                throw  new ArgumentException($"{nameof(@event.Email)} could not be null or empty");
+            
+            if(Email != @event.Email)
+                throw new ArgumentException($"Incorrect Email. User doesn't have an email {@event.Email}");
+
+            if (Status == UserStatus.Confirmed)
+                throw new AggregateException($"User already has confirmed {@event.Email} email");
+
+            Status = UserStatus.Confirmed;
         }
         #endregion
 
         public static class UserStatus
         {
             public const string Awaiting = "AWAITING";
+            public const string Confirmed = "CONFIRMED";
+            public const string Pending = "PENDING";
         }
     }
 }

@@ -27,6 +27,12 @@ namespace Brutus.User.Domain
                 public Guid UserId { get; set; }
                 public string Email { get; set; }
             }
+
+            public class ConfirmUserEmail : ICommand
+            {
+                public Guid UserId { get; set; }
+                public string Email { get; set; }
+            }
         }
     }
 }

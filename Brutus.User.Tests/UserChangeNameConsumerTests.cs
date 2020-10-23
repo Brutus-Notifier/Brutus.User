@@ -12,7 +12,7 @@ namespace Brutus.User.Tests
 {
     public class UserChangeNameConsumerTests:ConsumerTestBase
     {
-        private readonly ConsumerTestHarness<ChangeUserNameCommandHandler> _consumer;
+        private readonly ConsumerTestHarness<UserChangeNameCommandHandler> _consumer;
         
         public UserChangeNameConsumerTests()
         {
@@ -21,7 +21,7 @@ namespace Brutus.User.Tests
                 .ReturnsAsync(new Domain.User(InVar.Id, "testName", "testLastName", "test@email.com"));
             userMock.Setup(repo => repo.UpdateAsync(It.IsAny<Domain.User>())).Returns<Aggregate>(user => Task.FromResult(user.DequeueEvents()));
             
-            _consumer = Harness.Consumer(() => new ChangeUserNameCommandHandler(userMock.Object));
+            _consumer = Harness.Consumer(() => new UserChangeNameCommandHandler(userMock.Object));
         }
         
         [Fact]
@@ -29,18 +29,18 @@ namespace Brutus.User.Tests
         {
             await RunTest(async () =>
             {
-                await Harness.InputQueueSendEndpoint.Send(new Commands.V1.ChangeUserName
+                await Harness.InputQueueSendEndpoint.Send(new Domain.Commands.V1.UserChangeName
                 {
                     UserId = InVar.Id,
                     FirstName = "TestFirstName",
                     LastName = "TestLastName",
                 });
 
-                Assert.True(await Harness.Consumed.Any<Commands.V1.ChangeUserName>());
-                Assert.True(await _consumer.Consumed.Any<Commands.V1.ChangeUserName>());
+                Assert.True(await Harness.Consumed.Any<Domain.Commands.V1.UserChangeName>());
+                Assert.True(await _consumer.Consumed.Any<Domain.Commands.V1.UserChangeName>());
 
-                Assert.True(await Harness.Published.Any<Events.V1.UserNameChanged>());
-                Assert.False(await Harness.Published.Any<Fault<Commands.V1.ChangeUserName>>());
+                Assert.True(await Harness.Published.Any<Domain.Events.V1.UserNameChanged>());
+                Assert.False(await Harness.Published.Any<Fault<Domain.Commands.V1.UserChangeName>>());
             });
         }
 
@@ -49,14 +49,14 @@ namespace Brutus.User.Tests
         {
             await RunTest(async () =>
             {
-                await Harness.InputQueueSendEndpoint.Send(new Commands.V1.ChangeUserName
+                await Harness.InputQueueSendEndpoint.Send(new Domain.Commands.V1.UserChangeName
                 {
                     UserId = InVar.Id,
                     FirstName = "",
                     LastName = "TestLastName",
                 });
                 
-                Assert.True(await Harness.Published.Any<Fault<Commands.V1.ChangeUserName>>());
+                Assert.True(await Harness.Published.Any<Fault<Domain.Commands.V1.UserChangeName>>());
             });
         }
     }

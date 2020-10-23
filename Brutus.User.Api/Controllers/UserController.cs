@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Brutus.User.Domain;
+using DomainCommands = Brutus.User.Domain.Commands;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -20,14 +20,14 @@ namespace Brutus.User.Api.Controllers
         }
 
         [HttpPost("create")]
-        public async Task CreateUser(Commands.V1.CreateUser command)
+        public async Task CreateUser(DomainCommands.V1.UserCreate command)
         {
             await _bus.Publish(command);
         }
 
         [HttpPut]
         [Route("change-name")]
-        public async Task ChangeName(Commands.V1.ChangeUserName command)
+        public async Task ChangeName(DomainCommands.V1.UserChangeName command)
         {
             await _bus.Publish(command);
         }

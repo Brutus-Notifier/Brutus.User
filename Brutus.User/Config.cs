@@ -1,6 +1,5 @@
 using Brutus.Core;
 using Brutus.User.CommandHandlers;
-using Brutus.User.Domain;
 using Marten;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -23,12 +22,12 @@ namespace Brutus.User
 
             services.AddMassTransit(settings =>
             {
-                settings.AddConsumersFromNamespaceContaining<CreateUserCommandHandler>();
+                settings.AddConsumersFromNamespaceContaining<UserCreateCommandHandler>();
                 settings.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.ConfigureEndpoints(context);
                 });
-                settings.AddRequestClient<Commands.V1.CreateUser>();
+                settings.AddRequestClient<Brutus.User.Domain.Commands.V1.UserCreate>();
             });
             services.AddMassTransitHostedService();
         }

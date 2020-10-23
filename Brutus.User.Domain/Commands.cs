@@ -7,14 +7,14 @@ namespace Brutus.User.Domain
     {
         public static class V1
         {
-            public class ChangeUserName: ICommand
+            public class UserChangeName: ICommand
             {
                 public Guid UserId { get; set; }
                 public string FirstName { get; set; }
                 public string LastName { get; set; }
             }
             
-            public class CreateUser : ICommand
+            public class UserCreate : ICommand
             {
                 public Guid UserId { get; set; }
                 public string FirstName { get; set; }
@@ -22,13 +22,13 @@ namespace Brutus.User.Domain
                 public string Email { get; set; }
             }
             
-            public class ChangeUserEmail : ICommand
+            public class UserChangeEmail : ICommand
             {
                 public Guid UserId { get; set; }
                 public string Email { get; set; }
             }
 
-            public class ConfirmUserEmail : ICommand
+            public class UserConfirmEmail : ICommand
             {
                 public Guid UserId { get; set; }
                 public string Email { get; set; }

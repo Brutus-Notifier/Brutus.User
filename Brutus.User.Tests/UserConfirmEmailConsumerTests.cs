@@ -12,7 +12,7 @@ namespace Brutus.User.Tests
 {
     public class UserConfirmEmailConsumerTests: ConsumerTestBase
     {
-        private readonly ConsumerTestHarness<ConfirmEmailCommandHandler> _consumer;
+        private readonly ConsumerTestHarness<UserConfirmEmailCommandHandler> _consumer;
 
         public UserConfirmEmailConsumerTests()
         {
@@ -21,7 +21,7 @@ namespace Brutus.User.Tests
                 .ReturnsAsync(new Domain.User(InVar.Id, "testName", "testLastName", "test@email.com"));
             userMock.Setup(repo => repo.UpdateAsync(It.IsAny<Domain.User>())).Returns<Aggregate>(user => Task.FromResult(user.DequeueEvents()));
 
-            _consumer = Harness.Consumer(() => new ConfirmEmailCommandHandler(userMock.Object));
+            _consumer = Harness.Consumer(() => new UserConfirmEmailCommandHandler(userMock.Object));
         }
 
         [Fact]
@@ -29,17 +29,17 @@ namespace Brutus.User.Tests
         {
             await RunTest(async () =>
             {
-                await Harness.InputQueueSendEndpoint.Send(new Commands.V1.ConfirmUserEmail()
+                await Harness.InputQueueSendEndpoint.Send(new Domain.Commands.V1.UserConfirmEmail()
                 {
                     UserId = InVar.Id,
                     Email = "test@email.com"
                 });
                 
-                Assert.True(await Harness.Consumed.Any<Commands.V1.ConfirmUserEmail>());
-                Assert.True(await _consumer.Consumed.Any<Commands.V1.ConfirmUserEmail>());
+                Assert.True(await Harness.Consumed.Any<Domain.Commands.V1.UserConfirmEmail>());
+                Assert.True(await _consumer.Consumed.Any<Domain.Commands.V1.UserConfirmEmail>());
                 
-                Assert.True(await Harness.Published.Any<Events.V1.UserEmailConfirmed>());
-                Assert.False(await Harness.Published.Any<Fault<Commands.V1.ConfirmUserEmail>>());
+                Assert.True(await Harness.Published.Any<Domain.Events.V1.UserEmailConfirmed>());
+                Assert.False(await Harness.Published.Any<Fault<Domain.Commands.V1.UserConfirmEmail>>());
             });
         }
         
@@ -48,13 +48,13 @@ namespace Brutus.User.Tests
         {
             await RunTest(async () =>
             {
-                await Harness.InputQueueSendEndpoint.Send(new Commands.V1.ConfirmUserEmail()
+                await Harness.InputQueueSendEndpoint.Send(new Domain.Commands.V1.UserConfirmEmail()
                 {
                     UserId = InVar.Id,
                     Email = "    "
                 });
                 
-                Assert.True(await Harness.Published.Any<Fault<Commands.V1.ConfirmUserEmail>>());
+                Assert.True(await Harness.Published.Any<Fault<Domain.Commands.V1.UserConfirmEmail>>());
             });
         }
     }

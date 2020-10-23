@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Brutus.Core;
 using Brutus.User.CommandHandlers;
-using Brutus.User.Domain;
 using MassTransit;
 using MassTransit.Testing;
 using Moq;
@@ -12,7 +11,7 @@ namespace Brutus.User.Tests
 {
     public class UserChangeEmailConsumerTests:ConsumerTestBase
     {
-        private readonly ConsumerTestHarness<ChangeUserEmailCommandHandler> _consumer;
+        private readonly ConsumerTestHarness<UserChangeEmailCommandHandler> _consumer;
         
         public UserChangeEmailConsumerTests()
         {
@@ -21,7 +20,7 @@ namespace Brutus.User.Tests
                 .ReturnsAsync(new Domain.User(InVar.Id, "testName", "testLastName", "test@email.com"));
             userMock.Setup(repo => repo.UpdateAsync(It.IsAny<Domain.User>())).Returns<Aggregate>(user => Task.FromResult(user.DequeueEvents()));
             
-            _consumer = Harness.Consumer(() => new ChangeUserEmailCommandHandler(userMock.Object));
+            _consumer = Harness.Consumer(() => new UserChangeEmailCommandHandler(userMock.Object));
         }
         
         [Fact]
@@ -29,17 +28,17 @@ namespace Brutus.User.Tests
         {
             await RunTest(async () =>
             {
-                await Harness.InputQueueSendEndpoint.Send(new Commands.V1.ChangeUserEmail
+                await Harness.InputQueueSendEndpoint.Send(new Domain.Commands.V1.UserChangeEmail
                 {
                     UserId = InVar.Id,
                     Email = "test2@email.com"
                 });
 
-                Assert.True(await Harness.Consumed.Any<Commands.V1.ChangeUserEmail>());
-                Assert.True(await _consumer.Consumed.Any<Commands.V1.ChangeUserEmail>());
+                Assert.True(await Harness.Consumed.Any<Domain.Commands.V1.UserChangeEmail>());
+                Assert.True(await _consumer.Consumed.Any<Domain.Commands.V1.UserChangeEmail>());
 
-                Assert.True(await Harness.Published.Any<Events.V1.UserEmailChanged>());
-                Assert.False(await Harness.Published.Any<Fault<Commands.V1.ChangeUserEmail>>());
+                Assert.True(await Harness.Published.Any<Domain.Events.V1.UserEmailChanged>());
+                Assert.False(await Harness.Published.Any<Fault<Domain.Commands.V1.UserChangeEmail>>());
             });
         }
 
@@ -48,13 +47,13 @@ namespace Brutus.User.Tests
         {
             await RunTest(async () =>
             {
-                await Harness.InputQueueSendEndpoint.Send(new Commands.V1.ChangeUserEmail
+                await Harness.InputQueueSendEndpoint.Send(new Domain.Commands.V1.UserChangeEmail
                 {
                     UserId = InVar.Id,
                     Email = "@aweqwe@qweqwe.com"
                 });
                 
-                Assert.True(await Harness.Published.Any<Fault<Commands.V1.ChangeUserEmail>>());
+                Assert.True(await Harness.Published.Any<Fault<Domain.Commands.V1.UserChangeEmail>>());
             });
         }
     }

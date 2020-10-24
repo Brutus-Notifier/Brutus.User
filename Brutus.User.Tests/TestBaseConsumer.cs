@@ -4,11 +4,11 @@ using MassTransit.Testing;
 
 namespace Brutus.User.Tests
 {
-    public abstract class ConsumerTestBase
+    public abstract class TestBaseConsumer
     {
         protected readonly InMemoryTestHarness Harness;
 
-        protected ConsumerTestBase()
+        protected TestBaseConsumer()
         {
             Harness = new InMemoryTestHarness();
         }

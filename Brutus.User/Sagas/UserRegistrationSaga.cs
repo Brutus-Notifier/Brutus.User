@@ -42,12 +42,15 @@ namespace Brutus.User.Sagas
 
             During(Submitted,
                 When(EmailConfirmationSent)
-                    .Then(x => x.Instance.Email = x.Data.Email)
-                    .TransitionTo(ConfirmationSent));
+                    .Then(x => x.Instance.Email = x.Data.Email).TransitionTo(ConfirmationSent),
+                When(EmailConfirmed)
+                    .Finalize()
+            );
 
             During(ConfirmationSent,
                 When(EmailConfirmed)
-                    .TransitionTo(Final));
+                    .Finalize()
+            );
         }
     }
 }

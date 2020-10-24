@@ -11,11 +11,11 @@ using Xunit;
 
 namespace Brutus.User.Tests
 {
-    public class UserSendEmailConfirmationConsumerTests: ConsumerTestBase
+    public class UserSendEmailConfirmationTestBaseConsumerTests: TestBaseConsumer
     {
         private readonly ConsumerTestHarness<UserSendConfirmationEmailCommandHandler> _consumer;
 
-        public UserSendEmailConfirmationConsumerTests()
+        public UserSendEmailConfirmationTestBaseConsumerTests()
         {
             Mock<IEmailService> emailServiceMock = new Mock<IEmailService>();
             emailServiceMock.Setup(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(true));

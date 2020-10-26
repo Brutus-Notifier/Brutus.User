@@ -14,12 +14,6 @@ namespace Brutus.User.CommandHandlers
         }
 
         public async Task Consume(ConsumeContext<DomainCommands.V1.UserChangeName> context)
-        {
-            var user = await _repository.FindAsync(context.Message.UserId);
-            user.ChangeName(context.Message.FirstName, context.Message.LastName);
-            var events = await _repository.UpdateAsync(user);
-
-            foreach (var @event in events) await context.Publish(@event);
-        }
+            => await this.HandleUpdate(context, _repository, context.Message.UserId, x => x.ChangeName(context.Message.FirstName, context.Message.LastName));
     }
 }

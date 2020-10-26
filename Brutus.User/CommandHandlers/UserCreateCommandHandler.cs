@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Brutus.Core;
 using DomainCommands = Brutus.User.Domain.Commands;
@@ -18,8 +19,7 @@ namespace Brutus.User.CommandHandlers
         {
             var user = new Domain.User(context.Message.UserId, context.Message.FirstName, context.Message.LastName, context.Message.Email);
             var events = await _repository.AddAsync(user);
-            
-            foreach (var @event in events) await context.Publish(@event);
+            await Task.WhenAll(events.Select(@event => context.Publish(@event)));
         }
     }
 }

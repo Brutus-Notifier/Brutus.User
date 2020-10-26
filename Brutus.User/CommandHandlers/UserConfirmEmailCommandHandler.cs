@@ -15,12 +15,6 @@ namespace Brutus.User.CommandHandlers
         }
 
         public async Task Consume(ConsumeContext<DomainCommands.V1.UserConfirmEmail> context)
-        {
-            var user = await _repository.FindAsync(context.Message.UserId);
-            user.ConfirmEmail(context.Message.Email);
-            var events = await _repository.UpdateAsync(user);
-            
-            foreach (var @event in events) await context.Publish(@event);
-        }
+            => await this.HandleUpdate(context, _repository, context.Message.UserId, x => x.ConfirmEmail(context.Message.Email));
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using DomainCommands = Brutus.User.Domain.Commands;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
@@ -25,11 +26,9 @@ namespace Brutus.User.Api.Controllers
             await _bus.Publish(command);
         }
 
-        [HttpPut]
-        [Route("change-name")]
-        public async Task ChangeName(DomainCommands.V1.UserChangeName command)
-        {
-            await _bus.Publish(command);
+        [HttpPost("confirm-email")]
+        public async Task ConfirmEmail(DomainCommands.V1.UserConfirmEmail command){
+            throw new NotImplementedException();
         }
     }
 }

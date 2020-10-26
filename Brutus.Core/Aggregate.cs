@@ -6,9 +6,8 @@ using System.Runtime.ExceptionServices;
 
 namespace Brutus.Core
 {
-    public abstract class Aggregate
+    public abstract class Aggregate: Entity
     {
-        public Guid Id { get; set; }
         public int Version { get; set; }
         private readonly IList<object> _events = new List<object>();
         

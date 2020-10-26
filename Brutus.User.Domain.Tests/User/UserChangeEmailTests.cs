@@ -59,7 +59,7 @@ namespace Brutus.User.Domain.Tests.User
         {
             var longEmail = "veryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy.long@email.com";
             ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeEmail(longEmail));
-            Assert.Equal("Email could not be longer then 50 characters", exception.Message);
+            Assert.Equal("Email could not be longer than 50 characters", exception.Message);
         }
 
         [Theory]

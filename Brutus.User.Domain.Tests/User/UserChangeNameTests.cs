@@ -73,7 +73,7 @@ namespace Brutus.User.Domain.Tests.User
         {
             var firstName = "TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_TEST_LONG_NAME__";
             ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeName(firstName, _userLastName));
-            Assert.Equal("FirstName could not be longer the 100 characters", exception.Message);
+            Assert.Equal("FirstName could not be longer than 100 characters", exception.Message);
         }
         
         [Theory]
@@ -91,7 +91,7 @@ namespace Brutus.User.Domain.Tests.User
         {
             var lastName = "TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_TEST_LONG_NAME__";
             ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeName(_userFirstName, lastName));
-            Assert.Equal("LastName could not be longer the 100 characters", exception.Message);
+            Assert.Equal("LastName could not be longer than 100 characters", exception.Message);
         }
     }
 }

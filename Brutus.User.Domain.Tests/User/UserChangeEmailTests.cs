@@ -41,7 +41,6 @@ namespace Brutus.User.Domain.Tests.User
         {
             _user.ChangeEmail(_userEmail);
             Assert.Equal(_userEmail, _user.Email);
-            Assert.Equal( Domain.User.UserStatus.Pending, _user.Status);
         }
 
         [Theory]

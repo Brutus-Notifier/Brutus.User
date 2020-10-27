@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DomainCommands = Brutus.User.Domain.Commands;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,22 +12,45 @@ namespace Brutus.User.Api.Controllers
     {
         private readonly ILogger<UserController> _logger;
         private IBus _bus;
-        
-        public UserController(ILogger<UserController> logger, IBus bus)
+        private readonly IRequestClient<Commands.V1.FinishUserRegistration> _finishRegistrationClient;
+        private readonly IRequestClient<Commands.V1.UserCreate> _createUserClient;
+
+        public UserController(ILogger<UserController> logger, IBus bus, 
+            IRequestClient<Commands.V1.FinishUserRegistration> finishRegistrationClient,
+            IRequestClient<Commands.V1.UserCreate> createUserClient)
         {
             _logger = logger;
             _bus = bus;
+            _finishRegistrationClient = finishRegistrationClient;
+            _createUserClient = createUserClient;
         }
 
         [HttpPost("create")]
-        public async Task CreateUser(DomainCommands.V1.UserCreate command)
+        public async Task<IActionResult> CreateUser(Commands.V1.UserCreate command)
         {
-            await _bus.Publish(command);
+            try
+            {
+                await _createUserClient.GetResponse<Events.V1.RegistrationUserStarted>(command);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("confirm-email")]
-        public async Task ConfirmEmail(DomainCommands.V1.UserConfirmEmail command){
-            throw new NotImplementedException();
+        public async Task<IActionResult> ConfirmEmail(Commands.V1.FinishUserRegistration command)
+        {
+            try
+            {
+                await _finishRegistrationClient.GetResponse<Events.V1.RegistrationUserFinished>(command);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

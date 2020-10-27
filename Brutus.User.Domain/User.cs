@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using Automatonymous;
 using Brutus.Core;
 
 namespace Brutus.User.Domain
@@ -32,6 +33,11 @@ namespace Brutus.User.Domain
         {
             Apply(new Events.V1.UserEmailConfirmed(userId: this.Id, email));
         }
+        
+        public void Activate()
+        {
+            Apply(new Events.V1.UserActivated(Id, Email, FirstName, LastName));
+        }
 
         #region When
         private void When(Events.V1.UserCreated @event)
@@ -39,7 +45,7 @@ namespace Brutus.User.Domain
             Id = @event.UserId;
             When(new Events.V1.UserNameChanged(userId: this.Id, firstName:  @event.FirstName, lastName: @event.LastName));
             When(new Events.V1.UserEmailChanged(userId: this.Id, email: @event.Email));
-            Status = UserStatus.Awaiting;
+            Status = UserStatus.Pending;
         }
         
         private void When(Events.V1.UserNameChanged @event)
@@ -63,7 +69,6 @@ namespace Brutus.User.Domain
                 throw new ArgumentException($"Email {trimmedEmail} is invalid");
 
             Email = trimmedEmail;
-            Status = UserStatus.Pending;
         }
         
         private void When(Events.V1.UserEmailConfirmed @event)
@@ -73,18 +78,25 @@ namespace Brutus.User.Domain
             if(Email != @event.Email)
                 throw new ArgumentException($"Incorrect Email. User doesn't have an email {@event.Email}");
 
-            if (Status == UserStatus.Confirmed)
+            if (Status == UserStatus.Active)
                 throw new AggregateException($"User already has confirmed {@event.Email} email");
 
-            Status = UserStatus.Confirmed;
+            Status = UserStatus.Active;
+        }
+
+        private void When(Events.V1.UserActivated @event)
+        {
+            if (Status == UserStatus.Active)
+                throw new AggregateException("User could not be activated as it is already in Active status");
+
+            Status = UserStatus.Active;
         }
         #endregion
 
         public static class UserStatus
         {
-            public const string Awaiting = "AWAITING";
-            public const string Confirmed = "CONFIRMED";
-            public const string Pending = "PENDING";
+            public const string Pending = "Pending";
+            public const string Active = "Active";
         }
     }
 }

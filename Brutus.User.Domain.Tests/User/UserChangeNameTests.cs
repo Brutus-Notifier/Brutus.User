@@ -24,7 +24,7 @@ namespace Brutus.User.Domain.Tests.User
             
             Assert.Equal(_userFirstName, _user.FirstName);
             Assert.Equal(_userLastName, _user.LastName);
-            Assert.Equal(Domain.User.UserStatus.Awaiting, _user.Status);
+            Assert.Equal(Domain.User.UserStatus.Pending, _user.Status);
         }
 
         [Fact]

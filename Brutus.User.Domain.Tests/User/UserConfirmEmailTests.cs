@@ -17,7 +17,7 @@ namespace Brutus.User.Domain.Tests.User
         public void ShouldChangeAggregateDataOnSuccess()
         {
             _user.ConfirmEmail(_user.Email);
-            Assert.Equal(Domain.User.UserStatus.Confirmed, _user.Status);
+            Assert.Equal(Domain.User.UserStatus.Active, _user.Status);
         }
         
         [Fact]

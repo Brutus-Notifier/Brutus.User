@@ -1,7 +1,10 @@
 using Brutus.Core;
 using Brutus.User.CommandHandlers;
+using Brutus.User.Sagas;
+using Brutus.User.Services;
 using Marten;
 using MassTransit;
+using MassTransit.Saga;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +15,9 @@ namespace Brutus.User
         public static void AddBrutusUserService(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IRepository<Domain.User>, MartenRepository<Domain.User>>();
+            services.AddScoped<IEmailService, StubEmailService>();
+            services.RegisterInMemorySagaRepository<UserRegistrationState>();
+            
             services.AddMarten(settings =>
             {
                 var conStr = configuration.GetConnectionString("Marten");
@@ -27,7 +33,9 @@ namespace Brutus.User
                 {
                     cfg.ConfigureEndpoints(context);
                 });
-                settings.AddRequestClient<Brutus.User.Domain.Commands.V1.UserCreate>();
+                settings.AddRequestClient<Commands.V1.FinishUserRegistration>();
+                settings.AddRequestClient<Commands.V1.UserCreate>();
+                settings.AddSagaStateMachine(typeof(UserRegistrationSaga));
             });
             services.AddMassTransitHostedService();
         }

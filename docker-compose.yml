@@ -6,6 +6,7 @@ services:
     ports:
       - "5432:5432"
     environment:
+      POSTGRES_DB: marten_testing
       POSTGRES_PASSWORD: postgres
   
   adminer:

@@ -23,7 +23,7 @@ namespace Brutus.User.Domain.Tests.User
             Assert.Equal(_userData.FirstName, _createdUser.FirstName);
             Assert.Equal(_userData.LastName, _createdUser.LastName);
             Assert.Equal(_userData.Email, _createdUser.Email);
-            Assert.Equal(Domain.User.UserStatus.Awaiting, _createdUser.Status);
+            Assert.Equal(Domain.User.UserStatus.Pending, _createdUser.Status);
         }
         
         [Fact]

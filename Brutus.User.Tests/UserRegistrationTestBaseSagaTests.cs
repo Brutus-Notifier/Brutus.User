@@ -3,19 +3,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Brutus.User.Sagas;
 using MassTransit;
+using MassTransit.Testing;
 using Xunit;
 
 namespace Brutus.User.Tests
 {
     public class UserRegistrationTestBaseSagaTests: TestBaseSaga<UserRegistrationState, UserRegistrationSaga>
     {
-        private readonly Guid _userId;
-        private readonly string _userEmail;
+        private readonly (Guid Id, string Email, string FirstName, string LastName) _userData;
 
         public UserRegistrationTestBaseSagaTests()
         {
-            _userId = NewId.NextGuid();
-            _userEmail = "test@email.com";
+            _userData = (NewId.NextGuid(), "test@email.com", "TestFirst", "TestLast");
         }
         
         [Fact]
@@ -23,8 +22,8 @@ namespace Brutus.User.Tests
         {
             await RunTest(async () =>
             {
-                await Publish(new Domain.Events.V1.UserCreated(_userId, "TestFirst", "TestLast", _userEmail));
-                var instance = await FindMachineInstance(_userId, StateMachine.Submitted);
+                await Publish(new Domain.Events.V1.UserCreated(_userData.Id, _userData.FirstName, _userData.LastName, _userData.Email));
+                var instance = await FindMachineInstance(_userData.Id, StateMachine.Submitted);
                 
                 Assert.NotNull(instance);
                 Assert.True(Harness.Consumed.Select<Domain.Events.V1.UserCreated>().Any());
@@ -37,13 +36,13 @@ namespace Brutus.User.Tests
         {
             await RunTest(async () =>
             {
-                await Publish(new Domain.Events.V1.UserCreated(_userId, "TestFirst", "TestLast", _userEmail), TimeSpan.FromMilliseconds(100));
-                await Publish(new Events.V1.UserEmailConfirmationSent(_userId, _userEmail));
+                await Publish(new Domain.Events.V1.UserCreated(_userData.Id, _userData.FirstName, _userData.LastName, _userData.Email));
+                await Publish(new Events.V1.UserEmailConfirmationSent(_userData.Id, _userData.Email));
 
-                var instance = await FindMachineInstance(_userId, StateMachine.ConfirmationSent);
+                var instance = await FindMachineInstance(_userData.Id, StateMachine.ConfirmationSent);
                 
                 Assert.NotNull(instance);
-                Assert.Equal(_userEmail, instance.Email);
+                Assert.Equal(_userData.Email, instance.Email);
                 
                 Assert.True(Harness.Consumed.Select<Events.V1.UserEmailConfirmationSent>().Any());
                 Assert.True(HarnessSaga.Consumed.Select<Events.V1.UserEmailConfirmationSent>().Any());
@@ -52,19 +51,19 @@ namespace Brutus.User.Tests
         }
         
         [Fact]
-        public async Task ShouldChangeStateToFinishedEmailConfirmedEvent()
+        public async Task ShouldChangeStateToFinishedWhenUserActivatedEvent()
         {
             await RunTest(async () =>
             {
-                await Publish(new Domain.Events.V1.UserCreated(_userId, "TestFirst", "TestLast", _userEmail), TimeSpan.FromMilliseconds(100));
-                await Publish(new Events.V1.UserEmailConfirmationSent(_userId, _userEmail));
-                await Publish(new Domain.Events.V1.UserEmailConfirmed(_userId, _userEmail));
-
-                var instance = await FindMachineInstance(_userId, StateMachine.Final);
+                await Publish(new Domain.Events.V1.UserCreated(_userData.Id, _userData.FirstName, _userData.LastName, _userData.Email));
+                await Publish(new Events.V1.UserEmailConfirmationSent(_userData.Id, _userData.Email));
+                await Publish(new Domain.Events.V1.UserActivated(_userData.Id, _userData.Email, _userData.FirstName, _userData.LastName));
                 
+                Assert.True(Harness.Consumed.Select<Domain.Events.V1.UserActivated>().Any());
+                Assert.True(HarnessSaga.Consumed.Select<Domain.Events.V1.UserActivated>().Any());
+                
+                var instance = await FindMachineInstance(_userData.Id, StateMachine.Final);
                 Assert.NotNull(instance);
-                Assert.True(Harness.Consumed.Select<Domain.Events.V1.UserEmailConfirmed>().Any());
-                Assert.True(HarnessSaga.Consumed.Select<Domain.Events.V1.UserEmailConfirmed>().Any());
             });
         }
         
@@ -73,7 +72,7 @@ namespace Brutus.User.Tests
         {
             await RunTest(async () =>
             {
-                await Publish(new Domain.Events.V1.UserCreated(_userId, "TestFirst", "TestLast", _userEmail));
+                await Publish(new Domain.Events.V1.UserCreated(_userData.Id, _userData.FirstName, _userData.LastName, _userData.Email));
                 Assert.True(await Harness.Published.Any<Commands.V1.UserSendEmailConfirmation>());
             });
         }

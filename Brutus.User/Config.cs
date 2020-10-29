@@ -4,7 +4,6 @@ using Brutus.User.Sagas;
 using Brutus.User.Services;
 using Marten;
 using MassTransit;
-using MassTransit.Saga;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,6 +27,8 @@ namespace Brutus.User
 
             services.AddMassTransit(settings =>
             {
+                var conStr = configuration.GetConnectionString("Marten");
+
                 settings.AddConsumersFromNamespaceContaining<UserCreateCommandHandler>();
                 settings.UsingRabbitMq((context, cfg) =>
                 {
@@ -35,7 +36,8 @@ namespace Brutus.User
                 });
                 settings.AddRequestClient<Commands.V1.FinishUserRegistration>();
                 settings.AddRequestClient<Commands.V1.UserCreate>();
-                settings.AddSagaStateMachine(typeof(UserRegistrationSaga));
+                settings.AddSagaStateMachine<UserRegistrationSaga, UserRegistrationState>()
+                    .MartenRepository(conStr);
             });
             services.AddMassTransitHostedService();
         }

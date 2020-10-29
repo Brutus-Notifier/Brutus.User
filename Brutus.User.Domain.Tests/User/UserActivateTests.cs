@@ -50,5 +50,13 @@ namespace Brutus.User.Domain.Tests.User
             var exception = Assert.Throws<AggregateException>(() => _user.Activate());
             Assert.Equal("User could not be activated as it is already in Active status", exception.Message);
         }
+
+        [Fact]
+        public void ShouldThrowAnExceptionIfUserWasNotInPendingState()
+        {
+            _user.Activate();
+            var exception = Assert.Throws<AggregateException>(() => _user.Activate());
+            Assert.Equal("User could not be activated as it is already in Active status", exception.Message);
+        }
     }
 }

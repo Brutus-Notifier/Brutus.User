@@ -23,12 +23,12 @@ namespace Brutus.Core
             _events.Add(@event);
         }
 
-        protected void Apply(object @event)
+        protected void Process(object @event)
         {
             Type thisType = GetType();
             if (thisType == null) throw new NotSupportedException($"Current this type is null!");
             
-            MethodInfo methodInfo = thisType.GetMethod("When",  BindingFlags.NonPublic | BindingFlags.Instance, Type.DefaultBinder, new [] { @event.GetType()}, null );
+            MethodInfo methodInfo = thisType.GetMethod("Apply",  BindingFlags.NonPublic | BindingFlags.Instance, Type.DefaultBinder, new [] { @event.GetType()}, null );
             if (methodInfo == null) throw new NotSupportedException($"Missing handler for event {@event.GetType().Name}");
             
             try

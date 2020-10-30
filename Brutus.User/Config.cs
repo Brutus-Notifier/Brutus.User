@@ -1,8 +1,10 @@
 using Brutus.Core;
 using Brutus.User.CommandHandlers;
+using Brutus.User.Projections;
 using Brutus.User.Sagas;
 using Brutus.User.Services;
 using Marten;
+using Marten.Services.Events;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +25,9 @@ namespace Brutus.User
                 
                 settings.Connection(conStr);
                 settings.AutoCreateSchemaObjects = AutoCreate.All;
+
+                settings.Events.InlineProjections.Add<UserRegisteredProjection>();
+                settings.Events.UseAggregatorLookup(AggregationLookupStrategy.UsePrivateApply);
             });
 
             services.AddMassTransit(settings =>

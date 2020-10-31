@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Brutus.Core;
 using Xunit;
 
 namespace Brutus.User.Domain.Tests.User
@@ -47,7 +48,7 @@ namespace Brutus.User.Domain.Tests.User
         public void ShouldThrowAnExceptionIfUserIsAlreadyActivated()
         {
             _user.Activate();
-            var exception = Assert.Throws<AggregateException>(() => _user.Activate());
+            var exception = Assert.Throws<DomainException>(() => _user.Activate());
             Assert.Equal("User could not be activated as it is already in Active status", exception.Message);
         }
 
@@ -55,7 +56,7 @@ namespace Brutus.User.Domain.Tests.User
         public void ShouldThrowAnExceptionIfUserWasNotInPendingState()
         {
             _user.Activate();
-            var exception = Assert.Throws<AggregateException>(() => _user.Activate());
+            var exception = Assert.Throws<DomainException>(() => _user.Activate());
             Assert.Equal("User could not be activated as it is already in Active status", exception.Message);
         }
     }

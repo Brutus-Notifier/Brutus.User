@@ -14,7 +14,7 @@ namespace Brutus.User
         {
             var aggregate = await repository.FindAsync(aggregateId);
             if (aggregate == null)
-                throw new InvalidOperationException($"{typeof(T).Name} with Id ${aggregateId} not found");
+                throw new InvalidOperationException($"{typeof(Y).Name} with Id ${aggregateId} not found");
 
             operation(aggregate);
             var events = await repository.UpdateAsync(aggregate);

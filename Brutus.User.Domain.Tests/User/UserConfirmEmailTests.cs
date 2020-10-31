@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Brutus.Core;
 using Xunit;
 
 namespace Brutus.User.Domain.Tests.User
@@ -59,7 +60,7 @@ namespace Brutus.User.Domain.Tests.User
         public void ShouldThrowEnExceptionIfEmailHasBeenAlreadyConfirmed()
         {
             _user.ConfirmEmail(_user.Email);
-            AggregateException exception = Assert.Throws<AggregateException>(() => _user.ConfirmEmail(_user.Email));
+            DomainException exception = Assert.Throws<DomainException>(() => _user.ConfirmEmail(_user.Email));
             Assert.Equal($"User already has confirmed {_user.Email} email", exception.Message);
         }
     }

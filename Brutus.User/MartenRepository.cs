@@ -18,6 +18,9 @@ namespace Brutus.User
         
         public async Task<T> FindAsync(Guid id)
         {
+            //reason -> https://github.com/JasperFx/marten/issues/1532
+            if (await _session.Events.FetchStreamStateAsync(id) == null) return null;
+            
             return await _session.Events.AggregateStreamAsync<T>(id, token: new CancellationToken());
         }
 

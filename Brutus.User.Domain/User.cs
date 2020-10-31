@@ -78,7 +78,7 @@ namespace Brutus.User.Domain
                 throw new ArgumentException($"Incorrect Email. User doesn't have an email {@event.Email}");
 
             if (Status == UserStatus.Active)
-                throw new AggregateException($"User already has confirmed {@event.Email} email");
+                throw new DomainException($"User already has confirmed {@event.Email} email");
 
             Status = UserStatus.Active;
         }
@@ -86,7 +86,7 @@ namespace Brutus.User.Domain
         private void Apply(Events.V1.UserActivated @event)
         {
             if (Status == UserStatus.Active)
-                throw new AggregateException("User could not be activated as it is already in Active status");
+                throw new DomainException("User could not be activated as it is already in Active status");
 
             Status = UserStatus.Active;
         }

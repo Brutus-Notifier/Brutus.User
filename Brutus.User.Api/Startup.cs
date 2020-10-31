@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Brutus.User.Api.Core;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,7 +39,7 @@ namespace Brutus.User.Api
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                // app.UseDeveloperExceptionPage();
                 
                 app.UseSwagger();
                 app.UseSwaggerUI(options =>
@@ -46,6 +47,8 @@ namespace Brutus.User.Api
                     options.SwaggerEndpoint("/swagger/v1/swagger.json", "User Service Api");
                 });
             }
+            
+            app.UseExceptionHandler(err => err.HandleException(includeDetails: true));
 
             app.UseRouting();
 

@@ -16,16 +16,16 @@ namespace Brutus.User.Projections
     {
         public UserRegisteredProjection()
         {
-            ProjectEvent<Domain.Events.V1.UserActivated>(@event => @event.UserId, Persist);
+            ProjectEvent<Events.V1.RegistrationUserFinished>(@event => @event.UserId, Persist);
         }
 
-        private void Persist(RegisteredUser view, Domain.Events.V1.UserActivated @event)
+        private void Persist(RegisteredUser view, Events.V1.RegistrationUserFinished @event)
         {
             view.Id = @event.UserId;
             view.Email = @event.Email;
-            view.IsActive = true;
             view.FirstName = @event.FirstName;
             view.LastName = @event.LastName;
+            view.IsActive = true;
         }
     }
 }

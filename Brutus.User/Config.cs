@@ -1,3 +1,4 @@
+using System;
 using Brutus.Core;
 using Brutus.User.CommandHandlers;
 using Brutus.User.Projections;
@@ -17,7 +18,6 @@ namespace Brutus.User
         {
             services.AddScoped<IRepository<Domain.User>, MartenRepository<Domain.User>>();
             services.AddScoped<IEmailService, StubEmailService>();
-            services.RegisterInMemorySagaRepository<UserRegistrationState>();
             
             services.AddMarten(settings =>
             {
@@ -25,9 +25,19 @@ namespace Brutus.User
                 
                 settings.Connection(conStr);
                 settings.AutoCreateSchemaObjects = AutoCreate.All;
-
-                settings.Events.InlineProjections.Add<UserRegisteredProjection>();
                 settings.Events.UseAggregatorLookup(AggregationLookupStrategy.UsePrivateApply);
+                // settings.Events.InlineProjections.Add<UserRegisteredProjection>();
+                
+                settings.Events.ProjectView<RegisteredUser, Guid>()
+                    .ProjectEvent<Events.V1.RegistrationUserFinished>(@event => @event.UserId, (view, @event) =>
+                    {
+                        view.Id = @event.UserId;
+                        view.Email = @event.Email;
+                        view.FirstName = @event.FirstName;
+                        view.LastName = @event.LastName;
+                        view.IsActive = true;
+                    });
+                    
             });
 
             services.AddMassTransit(settings =>

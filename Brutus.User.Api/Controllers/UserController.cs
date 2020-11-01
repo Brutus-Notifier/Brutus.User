@@ -33,7 +33,7 @@ namespace Brutus.User.Api.Controllers
         [HttpPost("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(Commands.V1.FinishUserRegistration command)
         {
-            await _finishRegistrationClient.GetResponse<Events.V1.RegistrationUserFinished>(command);
+            await _finishRegistrationClient.GetResponse<Events.V1.RegistrationUserEmailConfirmed>(command);
             return NoContent();
         }
     }

@@ -35,7 +35,7 @@ namespace Brutus.User.Domain
         
         public void Activate()
         {
-            Process(new Events.V1.UserActivated(Id, Email, FirstName, LastName));
+            Process(new Events.V1.UserActivated(Id));
         }
 
         #region Applies

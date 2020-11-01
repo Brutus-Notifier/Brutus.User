@@ -25,17 +25,33 @@ namespace Brutus.User
                     UserId = userId;
                 }
 
-                public Guid UserId { get; private set; }
+                public Guid UserId { get; }
             }
             
-            public class RegistrationUserFinished
+            public class RegistrationUserEmailConfirmed
             {
-                public RegistrationUserFinished(Guid userId)
+                public RegistrationUserEmailConfirmed(Guid userId)
                 {
                     UserId = userId;
                 }
 
-                public Guid UserId { get; private set; }
+                public Guid UserId { get; }
+            }
+
+            public class RegistrationUserFinished
+            {
+                public RegistrationUserFinished(Guid userId, string email, string firstName, string lastName)
+                {
+                    UserId = userId;
+                    FirstName = firstName;
+                    LastName = lastName;
+                    Email = email;
+                }
+                
+                public Guid UserId { get; }
+                public string Email { get; }
+                public string FirstName { get; }
+                public string LastName { get; }
             }
         }
     }

@@ -31,9 +31,6 @@ namespace Brutus.User.Domain.Tests.User
         {
             _user.Activate();
             var @event = (Events.V1.UserActivated) _user.DequeueEvents().Last();
-            Assert.Equal(_user.Email, @event.Email);
-            Assert.Equal(_user.FirstName, @event.FirstName);
-            Assert.Equal(_user.LastName, @event.LastName);
             Assert.Equal(_user.Id, @event.UserId);
         }
 

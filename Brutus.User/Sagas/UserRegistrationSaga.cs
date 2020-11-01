@@ -1,7 +1,6 @@
 using System;
 using Automatonymous;
 using Marten.Schema;
-using MassTransit;
 using DomainEvents = Brutus.User.Domain.Events;
 using ServiceEvents = Brutus.User.Events;
 
@@ -14,6 +13,8 @@ namespace Brutus.User.Sagas
         public Guid CorrelationId { get; set; }
         public int CurrentState { get; set; }
         public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
         
     public class UserRegistrationSaga : MassTransitStateMachine<UserRegistrationState>
@@ -32,26 +33,39 @@ namespace Brutus.User.Sagas
             Event(() => UserCreated, x => x.CorrelateById(context => context.Message.UserId));
             Event(() => EmailConfirmationSent, x => x.CorrelateById(context => context.Message.UserId));
             Event(() => UserActivated, x => x.CorrelateById(context => context.Message.UserId));
-            
+
             Initially(
                 When(UserCreated)
-                    .PublishAsync(context => context.Init<Commands.V1.UserSendEmailConfirmation>(new
+                    .Then(x =>
                     {
-                        UserId = context.Instance.CorrelationId,
-                        Email = context.Data.Email
-                    }))
-                    .TransitionTo(Submitted));
-
-            During(Submitted,
-                When(EmailConfirmationSent)
-                    .Then(x => x.Instance.Email = x.Data.Email).TransitionTo(ConfirmationSent),
-                When(UserActivated)
-                    .Finalize()
+                        x.Instance.Email = x.Data.Email;
+                        x.Instance.FirstName = x.Data.FirstName;
+                        x.Instance.LastName = x.Data.LastName;
+                    })
+                    .TransitionTo(Submitted)
             );
+            
+            WhenEnter(Submitted, 
+                context => context.Then(cx => cx.Publish(new Commands.V1.UserSendEmailConfirmation
+                {
+                    UserId = cx.Instance.CorrelationId,
+                    Email = cx.Instance.Email
+                }))
+            );
+
+            During(Submitted, 
+                When(EmailConfirmationSent)
+                    .TransitionTo(ConfirmationSent));
 
             During(ConfirmationSent,
                 When(UserActivated)
-                    .Finalize()
+                    .Publish(context => new Events.V1.RegistrationUserFinished(
+                        context.Instance.CorrelationId,
+                        context.Instance.Email,
+                        context.Instance.FirstName,
+                        context.Instance.LastName
+                    ))
+                    .TransitionTo(Final)
             );
             
             SetCompletedWhenFinalized();

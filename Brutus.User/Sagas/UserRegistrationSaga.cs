@@ -59,13 +59,7 @@ namespace Brutus.User.Sagas
 
             During(ConfirmationSent,
                 When(UserActivated)
-                    .Publish(context => new Events.V1.RegistrationUserFinished(
-                        context.Instance.CorrelationId,
-                        context.Instance.Email,
-                        context.Instance.FirstName,
-                        context.Instance.LastName
-                    ))
-                    .TransitionTo(Final)
+                    .Finalize()
             );
             
             SetCompletedWhenFinalized();

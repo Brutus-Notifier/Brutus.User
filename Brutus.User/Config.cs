@@ -26,18 +26,7 @@ namespace Brutus.User
                 settings.Connection(conStr);
                 settings.AutoCreateSchemaObjects = AutoCreate.All;
                 settings.Events.UseAggregatorLookup(AggregationLookupStrategy.UsePrivateApply);
-                // settings.Events.InlineProjections.Add<UserRegisteredProjection>();
-                
-                settings.Events.ProjectView<RegisteredUser, Guid>()
-                    .ProjectEvent<Events.V1.RegistrationUserFinished>(@event => @event.UserId, (view, @event) =>
-                    {
-                        view.Id = @event.UserId;
-                        view.Email = @event.Email;
-                        view.FirstName = @event.FirstName;
-                        view.LastName = @event.LastName;
-                        view.IsActive = true;
-                    });
-                    
+                settings.Events.InlineProjections.Add<UserRegisteredProjection>();
             });
 
             services.AddMassTransit(settings =>

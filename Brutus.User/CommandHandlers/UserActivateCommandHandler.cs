@@ -17,6 +17,7 @@ namespace Brutus.User.CommandHandlers
         {
             await this.HandleUpdate(context, _repository, context.Message.UserId,
                 x => x.Activate());
+
             await context.RespondAsync(new Events.V1.RegistrationUserEmailConfirmed(context.Message.UserId));
         }
     }

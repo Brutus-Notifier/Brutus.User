@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Brutus.User.Sagas;
 using MassTransit;
-using MassTransit.Testing;
 using Xunit;
 
 namespace Brutus.User.Tests
@@ -74,19 +73,6 @@ namespace Brutus.User.Tests
             {
                 await Publish(new Domain.Events.V1.UserCreated(_userData.Id, _userData.FirstName, _userData.LastName, _userData.Email));
                 Assert.True(await Harness.Published.Any<Commands.V1.UserSendEmailConfirmation>());
-            });
-        }
-        
-        [Fact]
-        public async Task ShouldPublishRegistrationUserFinishedEventWhenUserActivatedEvent()
-        {
-            await RunTest(async () =>
-            {
-                await Publish(new Domain.Events.V1.UserCreated(_userData.Id, _userData.FirstName, _userData.LastName, _userData.Email));
-                await Publish(new Events.V1.UserEmailConfirmationSent(_userData.Id, _userData.Email));
-                await Publish(new Domain.Events.V1.UserActivated(_userData.Id));
-                
-                Assert.True(await Harness.Published.Any<Events.V1.RegistrationUserFinished>());
             });
         }
     }

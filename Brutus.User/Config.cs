@@ -1,10 +1,9 @@
-using System;
 using Brutus.Core;
 using Brutus.User.CommandHandlers;
-using Brutus.User.Projections;
 using Brutus.User.Sagas;
 using Brutus.User.Services;
 using Marten;
+using Marten.Schema;
 using Marten.Services.Events;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +15,7 @@ namespace Brutus.User
     {
         public static void AddBrutusUserService(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IRepository<Domain.User>, MartenRepository<Domain.User>>();
+            services.AddScoped<IAggregateRepository<Domain.User>, MartenAggregateRepository<Domain.User>>();
             services.AddScoped<IEmailService, StubEmailService>();
             
             services.AddMarten(settings =>
@@ -26,7 +25,9 @@ namespace Brutus.User
                 settings.Connection(conStr);
                 settings.AutoCreateSchemaObjects = AutoCreate.All;
                 settings.Events.UseAggregatorLookup(AggregationLookupStrategy.UsePrivateApply);
-                settings.Events.InlineProjections.Add<UserRegisteredProjection>();
+                settings.Events.InlineProjections.AggregateStreamsWith<Domain.User>();
+
+                settings.Schema.For<Domain.User>().UniqueIndex(UniqueIndexType.DuplicatedField, x => x.Email);
             });
 
             services.AddMassTransit(settings =>

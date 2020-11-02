@@ -6,13 +6,13 @@ namespace Brutus.User.CommandHandlers
 {
     public class UserChangeEmailCommandHandler:ICommandHandler<Commands.V1.UserChangeEmail>
     {
-        private readonly IRepository<Domain.User> _repository;
-        public UserChangeEmailCommandHandler(IRepository<Domain.User> repository)
+        private readonly IAggregateRepository<Domain.User> _aggregateRepository;
+        public UserChangeEmailCommandHandler(IAggregateRepository<Domain.User> aggregateRepository)
         {
-            _repository = repository;
+            _aggregateRepository = aggregateRepository;
         }
         
         public async Task Consume(ConsumeContext<Commands.V1.UserChangeEmail> context) 
-            => await this.HandleUpdate(context, _repository, context.Message.UserId, x => x.ChangeEmail(context.Message.Email));
+            => await this.HandleUpdate(context, _aggregateRepository, context.Message.UserId, x => x.ChangeEmail(context.Message.Email));
     }
 }

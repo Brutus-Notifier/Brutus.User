@@ -37,6 +37,8 @@ namespace Brutus.User
 
                 public Guid UserId { get; }
             }
+
+            public class SuccessResponse { }
         }
     }
 }

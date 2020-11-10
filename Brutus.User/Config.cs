@@ -41,6 +41,7 @@ namespace Brutus.User
                 });
                 settings.AddRequestClient<Commands.V1.FinishUserRegistration>();
                 settings.AddRequestClient<Commands.V1.UserCreate>();
+                settings.AddRequestClient<Commands.V1.UserChangeName>();
                 settings.AddSagaStateMachine<UserRegistrationSaga, UserRegistrationState>()
                     .MartenRepository(conStr);
             });

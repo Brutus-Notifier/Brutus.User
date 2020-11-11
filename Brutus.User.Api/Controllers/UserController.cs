@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,11 +11,13 @@ namespace Brutus.User.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;
+        private readonly QueryHandler _queryHandler;
         private readonly IClientFactory _clientFactory;
 
-        public UserController(ILogger<UserController> logger, IBus bus)
+        public UserController(ILogger<UserController> logger, IBus bus, QueryHandler queryHandler)
         {
             _logger = logger;
+            _queryHandler = queryHandler;
             _clientFactory = bus.CreateClientFactory();
         }
 
@@ -43,6 +46,28 @@ namespace Brutus.User.Api.Controllers
             
             await changeUserNameClient.GetResponse<Events.V1.SuccessResponse>(command);
             return NoContent();
+        }
+
+        [HttpGet("find")]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetById([FromQuery] Queries.GetUserById request)
+        {
+            var result = await _queryHandler.Query(request);
+            if (result == null) return NotFound();
+
+            return Ok(result);
+        }
+
+        [HttpGet("all")]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetAll([FromQuery] Queries.GetAllUsers request)
+        {
+            var result = await _queryHandler.Query(request);
+            if (result == null) return NotFound();
+
+            return Ok(result);
         }
     }
 }

@@ -17,6 +17,7 @@ namespace Brutus.User
         {
             services.AddScoped<IAggregateRepository<Domain.User>, MartenAggregateRepository<Domain.User>>();
             services.AddScoped<IEmailService, StubEmailService>();
+            services.AddScoped<QueryHandler>();
             
             services.AddMarten(settings =>
             {

@@ -8,12 +8,10 @@ namespace Brutus.User.CommandHandlers
     public class UserActivateCommandHandler:ICommandHandler<Commands.V1.FinishUserRegistration>
     {
         private readonly IAggregateRepository<Domain.User> _aggregateRepository;
-        private readonly IDocumentSession _session;
 
-        public UserActivateCommandHandler(IAggregateRepository<Domain.User> aggregateRepository, IDocumentSession session)
+        public UserActivateCommandHandler(IAggregateRepository<Domain.User> aggregateRepository)
         {
             _aggregateRepository = aggregateRepository;
-            _session = session;
         }
 
         public async Task Consume(ConsumeContext<Commands.V1.FinishUserRegistration> context)

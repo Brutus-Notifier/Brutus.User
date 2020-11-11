@@ -8,7 +8,7 @@ namespace Brutus.User
 {
     public class QueryHandler
     {
-        private IDocumentSession _session;
+        private readonly IDocumentSession _session;
 
         public QueryHandler(IDocumentSession session)
         {
@@ -17,11 +17,11 @@ namespace Brutus.User
         
         public async Task<ReadModels.User> Query(Queries.GetUserById query)
         {
-            var result = await _session
+            return await _session
                 .Query<Domain.User>()
-                .FirstOrDefaultAsync(user => user.Id == query.UserId);
-            
-            return result == null ? null : new ReadModels.User(result.Id, result.FirstName, result.LastName, result.Email, result.Status);
+                .Where(user => user.Id == query.UserId)
+                .Select(usr => new ReadModels.User(usr.Id, usr.FirstName, usr.LastName, usr.Email, usr.Status))
+                .FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<ReadModels.User>> Query(Queries.GetAllUsers query)

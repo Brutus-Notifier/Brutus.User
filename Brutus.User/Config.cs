@@ -29,6 +29,8 @@ namespace Brutus.User
                 settings.Events.InlineProjections.AggregateStreamsWith<Domain.User>();
 
                 settings.Schema.For<Domain.User>().UniqueIndex(UniqueIndexType.DuplicatedField, x => x.Email);
+                
+                settings.UseDefaultSerialization(nonPublicMembersStorage: NonPublicMembersStorage.NonPublicSetters);
             });
 
             services.AddMassTransit(settings =>

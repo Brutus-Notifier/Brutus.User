@@ -27,9 +27,7 @@ namespace Brutus.User
                 settings.AutoCreateSchemaObjects = AutoCreate.All;
                 settings.Events.UseAggregatorLookup(AggregationLookupStrategy.UsePrivateApply);
                 settings.Events.InlineProjections.AggregateStreamsWith<Domain.User>();
-
                 settings.Schema.For<Domain.User>().UniqueIndex(UniqueIndexType.DuplicatedField, x => x.Email);
-                
                 settings.UseDefaultSerialization(nonPublicMembersStorage: NonPublicMembersStorage.NonPublicSetters);
             });
 

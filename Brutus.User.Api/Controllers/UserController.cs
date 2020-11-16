@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,11 @@ namespace Brutus.User.Api.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateUser(Commands.V1.UserCreate command)
         {
+            if (!ModelState.IsValid)
+            {
+                Console.WriteLine("NOT VALID!");
+            }
+            
             var createUserClient = _clientFactory.CreateRequestClient<Commands.V1.UserCreate>();
             
             await createUserClient.GetResponse<Events.V1.RegistrationUserStarted>(command);

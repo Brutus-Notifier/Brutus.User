@@ -1,4 +1,6 @@
 using Brutus.User.Api.Core;
+using Brutus.User.Api.Validators;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -20,7 +22,8 @@ namespace Brutus.User.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+                .AddFluentValidation(f => f.RegisterValidatorsFromAssemblyContaining<UserCreateValidator>());
             services.AddMediatR(typeof(Startup));
             services.AddBrutusUserService(Configuration);
 

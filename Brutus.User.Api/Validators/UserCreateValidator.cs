@@ -1,4 +1,3 @@
-using System;
 using FluentValidation;
 
 namespace Brutus.User.Api.Validators
@@ -7,10 +6,7 @@ namespace Brutus.User.Api.Validators
     {
         public UserCreateValidator()
         {
-            RuleFor(x => x.UserId).NotNull().Custom((userId, context) =>
-            {
-                if (userId == Guid.Empty) context.AddFailure("User id is mandatory field!");
-            });
+            RuleFor(x => x.UserId).NotEmpty();
             RuleFor(x => x.Email).EmailAddress();
             RuleFor(x => x.FirstName).NotEmpty();
             RuleFor(x => x.LastName).NotEmpty();

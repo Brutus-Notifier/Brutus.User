@@ -6,8 +6,6 @@ using Brutus.User.Sagas;
 using Marten;
 using Marten.Events;
 using MassTransit;
-using Npgsql;
-using MartenCommandException = Marten.Exceptions.MartenCommandException;
 
 namespace Brutus.User.CommandHandlers
 {
@@ -26,12 +24,12 @@ namespace Brutus.User.CommandHandlers
         {
             if (_session.Query<UserRegistrationState>().Any(x => x.Email == context.Message.Email))
             {
-                throw new DomainException($"{nameof(User)} with email {context.Message.Email} already started registration!");
+                throw new Exceptions.DataValidationException(nameof(Domain.User), nameof(Commands.V1.UserCreate.Email), $"{nameof(User)} with email {context.Message.Email} already started registration!");
             }
 
             if (_session.Query<Domain.User>().Any(x => x.Email == context.Message.Email))
             {
-                throw new DomainException($"{nameof(User)} with email {context.Message.Email} already exists!");
+                throw new Exceptions.DataValidationException(nameof(Domain.User), nameof(Commands.V1.UserCreate.Email), $"{nameof(User)} with email {context.Message.Email} already exists!");
             }
             
             var user = new Domain.User(context.Message.UserId, context.Message.FirstName, context.Message.LastName, context.Message.Email);
@@ -42,7 +40,7 @@ namespace Brutus.User.CommandHandlers
             }
             catch (ExistingStreamIdCollisionException)
             {
-                throw new DomainException($"{nameof(User)} with Id {user.Id} already exists!");
+                throw new Exceptions.DataValidationException(nameof(Domain.User), nameof(Commands.V1.UserCreate.UserId), $"{nameof(User)} with Id {user.Id} already exists!");
             }
 
             await Task.WhenAll(events.Select(@event => context.Publish(@event)));

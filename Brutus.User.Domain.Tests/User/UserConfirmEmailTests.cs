@@ -25,7 +25,7 @@ namespace Brutus.User.Domain.Tests.User
         public void ShouldThrowAnExceptionIfEmailIsEmpty()
         {
             Action act = () => _user.ConfirmEmail("  ");
-            ArgumentException exception = Assert.Throws<ArgumentException>(act);
+            DomainException exception = Assert.Throws<DomainException>(act);
             Assert.Equal("Email could not be null or empty", exception.Message);
         }
 
@@ -52,7 +52,7 @@ namespace Brutus.User.Domain.Tests.User
         public void ShouldThrowAnExceptionIfEmailIsNotTheSameAsInUser()
         {
             const string anotherEmail = "another.email@email.com";
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ConfirmEmail(anotherEmail));
+            DomainException exception = Assert.Throws<DomainException>(() => _user.ConfirmEmail(anotherEmail));
             Assert.Equal($"Incorrect Email. User doesn't have an email {anotherEmail}", exception.Message);
         }
 

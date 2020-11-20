@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Brutus.Core;
 using Xunit;
 
 namespace Brutus.User.Domain.Tests.User
@@ -64,7 +65,7 @@ namespace Brutus.User.Domain.Tests.User
         [InlineData(null)]
         public void ShouldThrowErrorIfFirstNameIsInvalid(string firstName)
         {
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeName(firstName, _userLastName));
+            DomainException exception = Assert.Throws<DomainException>(() => _user.ChangeName(firstName, _userLastName));
             Assert.Equal("FirstName could not be null or empty", exception.Message);
         }
 
@@ -72,7 +73,7 @@ namespace Brutus.User.Domain.Tests.User
         public void ShouldThrowErrorIfFirstNameIsLongerThen100Chars()
         {
             var firstName = "TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_TEST_LONG_NAME__";
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeName(firstName, _userLastName));
+            DomainException exception = Assert.Throws<DomainException>(() => _user.ChangeName(firstName, _userLastName));
             Assert.Equal("FirstName could not be longer than 100 characters", exception.Message);
         }
         
@@ -82,7 +83,7 @@ namespace Brutus.User.Domain.Tests.User
         [InlineData(null)]
         public void ShouldThrowErrorIfLastNameIsInvalid(string lastName)
         {
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeName(_userLastName, lastName));
+            DomainException exception = Assert.Throws<DomainException>(() => _user.ChangeName(_userLastName, lastName));
             Assert.Equal("LastName could not be null or empty", exception.Message);
         }
 
@@ -90,7 +91,7 @@ namespace Brutus.User.Domain.Tests.User
         public void ShouldThrowErrorIfLastNameIsLongerThen100Chars()
         {
             var lastName = "TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_LONG_NAME__TEST_TEST_LONG_NAME__";
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeName(_userFirstName, lastName));
+            DomainException exception = Assert.Throws<DomainException>(() => _user.ChangeName(_userFirstName, lastName));
             Assert.Equal("LastName could not be longer than 100 characters", exception.Message);
         }
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Brutus.Core;
 using Xunit;
 
 namespace Brutus.User.Domain.Tests.User
@@ -49,7 +50,7 @@ namespace Brutus.User.Domain.Tests.User
         [InlineData(null)]
         public void ShouldThrowExceptionIfEmailIsEmpty(string userEmail)
         {
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeEmail(userEmail));
+            DomainException exception = Assert.Throws<DomainException>(() => _user.ChangeEmail(userEmail));
             Assert.Equal("Email could not be null or empty", exception.Message);
         }
 
@@ -57,7 +58,7 @@ namespace Brutus.User.Domain.Tests.User
         public void ShouldThrowExceptionIfEmailLongerThen50Chars()
         {
             var longEmail = "veryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy.long@email.com";
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeEmail(longEmail));
+            DomainException exception = Assert.Throws<DomainException>(() => _user.ChangeEmail(longEmail));
             Assert.Equal("Email could not be longer than 50 characters", exception.Message);
         }
 
@@ -79,7 +80,7 @@ namespace Brutus.User.Domain.Tests.User
         [InlineData("Abc..123@example.com")]
         public void ShouldThrowExceptionIfEmailIsInvalid(string email)
         {
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => _user.ChangeEmail(email));
+            DomainException exception = Assert.Throws<DomainException>(() => _user.ChangeEmail(email));
             Assert.Equal($"Email {email} is invalid", exception.Message);
         }
         

@@ -45,13 +45,13 @@ namespace Brutus.User.Domain
         
         private void SetUserEmail(string email)
         {
-            var trimmedEmail = email?.Trim();
+            email = email?.Trim();
 
             CheckNullOrEmpty(email, "Email");
             CheckMaxLength(50, email, "Email");
             CheckIsMatch(Constants.EmailTemplate, email, "Email");
 
-            Email = trimmedEmail;
+            Email = email;
         }
         
         private void SetUserPassword(string password)

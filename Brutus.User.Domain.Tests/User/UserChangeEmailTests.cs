@@ -7,13 +7,13 @@ namespace Brutus.User.Domain.Tests.User
     public class UserChangeEmailTests
     {
         private readonly Domain.User _user;
-        private readonly (Guid Id, string FirstName, string LastName, string Email) _userData;
+        private readonly (Guid Id, string Password, string Email) _userData;
         private readonly string _userEmail = "newuser@email.com";
 
         public UserChangeEmailTests()
         {
-            _userData = (Id: Guid.NewGuid(), FirstName: "User First Name", LastName: "User Last Name", Email: "initial_user@email.com");
-            _user = new Domain.User(_userData.Id, _userData.FirstName, _userData.LastName, _userData.Email);
+            _userData = (Id: Guid.NewGuid(), Password: "Testing123!", Email: "initial_user@email.com");
+            _user = new Domain.User(_userData.Id, _userData.Password, _userData.Email);
         }
 
         [Fact]

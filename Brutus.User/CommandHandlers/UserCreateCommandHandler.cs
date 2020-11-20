@@ -32,7 +32,7 @@ namespace Brutus.User.CommandHandlers
                 throw new Exceptions.DataValidationException(nameof(Domain.User), nameof(Commands.V1.UserCreate.Email), $"{nameof(User)} with email {context.Message.Email} already exists!");
             }
             
-            var user = new Domain.User(context.Message.UserId, context.Message.FirstName, context.Message.LastName, context.Message.Email);
+            var user = new Domain.User(context.Message.UserId, context.Message.Password, context.Message.Email);
             IEnumerable<object> events;
             try
             {

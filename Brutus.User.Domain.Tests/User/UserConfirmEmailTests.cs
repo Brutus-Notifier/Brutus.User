@@ -11,7 +11,7 @@ namespace Brutus.User.Domain.Tests.User
 
         public UserConfirmEmailTests()
         {
-            _user = new Domain.User(Guid.NewGuid(), "TestFirstName", "TestLastName", "emaa@email.com");
+            _user = new Domain.User(Guid.NewGuid(), "Testing123!", "emaa@email.com");
         }
 
         [Fact]

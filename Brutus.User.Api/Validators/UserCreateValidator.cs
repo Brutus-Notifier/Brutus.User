@@ -1,3 +1,4 @@
+using Brutus.Core;
 using FluentValidation;
 
 namespace Brutus.User.Api.Validators
@@ -8,8 +9,7 @@ namespace Brutus.User.Api.Validators
         {
             RuleFor(x => x.UserId).NotEmpty();
             RuleFor(x => x.Email).EmailAddress();
-            RuleFor(x => x.FirstName).NotEmpty();
-            RuleFor(x => x.LastName).NotEmpty();
+            RuleFor(x => x.Password).Matches(Constants.PasswordTemplate);
         }
     }
 }

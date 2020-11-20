@@ -13,8 +13,6 @@ namespace Brutus.User.Sagas
         public Guid CorrelationId { get; set; }
         public int CurrentState { get; set; }
         public string Email { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
     }
         
     public class UserRegistrationSaga : MassTransitStateMachine<UserRegistrationState>
@@ -36,12 +34,7 @@ namespace Brutus.User.Sagas
 
             Initially(
                 When(UserCreated)
-                    .Then(x =>
-                    {
-                        x.Instance.Email = x.Data.Email;
-                        x.Instance.FirstName = x.Data.FirstName;
-                        x.Instance.LastName = x.Data.LastName;
-                    })
+                    .Then(x => x.Instance.Email = x.Data.Email)
                     .TransitionTo(Submitted)
             );
             
@@ -53,14 +46,8 @@ namespace Brutus.User.Sagas
                 }))
             );
 
-            During(Submitted, 
-                When(EmailConfirmationSent)
-                    .TransitionTo(ConfirmationSent));
-
-            During(ConfirmationSent,
-                When(UserActivated)
-                    .Finalize()
-            );
+            During(Submitted, When(EmailConfirmationSent).TransitionTo(ConfirmationSent));
+            During(ConfirmationSent, When(UserActivated).Finalize());
             
             SetCompletedWhenFinalized();
         }

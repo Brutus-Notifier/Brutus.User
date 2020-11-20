@@ -8,17 +8,15 @@ namespace Brutus.User.Domain
         {
             public class UserCreated
             {
-                public UserCreated(Guid userId, string firstName, string lastName, string email)
+                public UserCreated(Guid userId, string password, string email)
                 {
                     UserId = userId;
-                    FirstName = firstName;
-                    LastName = lastName;
+                    Password = password;
                     Email = email;
                 }
 
                 public Guid UserId { get; }
-                public string FirstName { get; }
-                public string LastName { get; }
+                public string Password { get; }
                 public string Email { get; }
             }
 

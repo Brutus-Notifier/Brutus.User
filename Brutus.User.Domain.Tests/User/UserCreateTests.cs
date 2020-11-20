@@ -7,12 +7,12 @@ namespace Brutus.User.Domain.Tests.User
     public class UserCreateTests
     {
         private readonly Domain.User _createdUser;
-        private readonly (Guid Id, string FirstName, string LastName, string Email) _userData;
+        private readonly (Guid Id, string Password, string Email) _userData;
         
         public UserCreateTests()
         {
-            _userData = (Id: Guid.NewGuid(), FirstName: "Test First Name", LastName: "Test Last Name", Email: "test@email.com");
-            _createdUser = new Domain.User(_userData.Id, _userData.FirstName, _userData.LastName, _userData.Email);
+            _userData = (Id: Guid.NewGuid(), Password: "Testing123!", Email: "test@email.com");
+            _createdUser = new Domain.User(_userData.Id, _userData.Password, _userData.Email);
         }
 
         [Fact]
@@ -20,10 +20,11 @@ namespace Brutus.User.Domain.Tests.User
         {
             Assert.NotNull(_createdUser);
             Assert.Equal(_userData.Id, _createdUser.Id);
-            Assert.Equal(_userData.FirstName, _createdUser.FirstName);
-            Assert.Equal(_userData.LastName, _createdUser.LastName);
+            Assert.Equal(_userData.Password, _createdUser.Password);
             Assert.Equal(_userData.Email, _createdUser.Email);
             Assert.Equal(Domain.User.UserStatus.Pending, _createdUser.Status);
+            Assert.Null(_createdUser.FirstName);
+            Assert.Null(_createdUser.LastName);
         }
         
         [Fact]
@@ -40,8 +41,7 @@ namespace Brutus.User.Domain.Tests.User
         {
             var @event = (Events.V1.UserCreated) _createdUser.DequeueEvents().Last();
             Assert.Equal(_createdUser.Id, @event.UserId);
-            Assert.Equal(_userData.FirstName, @event.FirstName);
-            Assert.Equal(_userData.LastName, @event.LastName);
+            Assert.Equal(_userData.Password, @event.Password);
             Assert.Equal(_userData.Email, @event.Email);
         }
     }

@@ -34,7 +34,10 @@ namespace Brutus.User.Sagas
 
             Initially(
                 When(UserCreated)
-                    .Then(x => x.Instance.Email = x.Data.Email)
+                    .Then(x =>
+                    {
+                        x.Instance.Email = x.Data.Email;
+                    })
                     .TransitionTo(Submitted)
             );
             

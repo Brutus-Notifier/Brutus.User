@@ -11,6 +11,7 @@ namespace Brutus.User
             {
                 public Guid UserId { get; set; }
                 public string Email { get; set; }
+                public Guid InvitationId { get; set; }
             }
             
             public class UserChangeName: ICommand
@@ -42,6 +43,12 @@ namespace Brutus.User
             public class FinishUserRegistration : ICommand
             {
                 public Guid UserId { get; set; }
+            }
+
+            public class CreateUserInvitation : ICommand
+            {
+                public Guid UserId { get; set; }
+                public string Email { get; set; }
             }
         }
     }

@@ -24,7 +24,7 @@ namespace Brutus.User.CommandHandlers
             if(context.Message.UserId == Guid.Empty)
                 throw new ArgumentNullException(nameof(context.Message.UserId));
 
-            var body = $"Hello, please confirm your email by this link";
+            var body = $"Hello, please confirm your email by this link with id {context.Message.InvitationId}";
             await _emailService.SendEmailAsync(context.Message.Email, body);
             await context.Publish(new Events.V1.UserEmailConfirmationSent(context.Message.UserId, context.Message.Email));
         }

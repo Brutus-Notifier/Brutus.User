@@ -18,19 +18,22 @@ namespace Brutus.User.Sagas
     public class UserRegistrationSaga : MassTransitStateMachine<UserRegistrationState>
     {
         public State Submitted { get; private set; }
+        public State InvitationCreated { get; private set; }
         public State ConfirmationSent { get; private set; }
         
         public Event<DomainEvents.V1.UserCreated> UserCreated { get; private set; }
         public Event<ServiceEvents.V1.UserEmailConfirmationSent> EmailConfirmationSent { get; private set; }
         public Event<DomainEvents.V1.UserActivated> UserActivated { get; private set; }
+        public Event<ServiceEvents.V1.UserInvitationCreated> UserInvitationCreated { get; private set; }
         
         public UserRegistrationSaga()
         {
-            InstanceState(x => x.CurrentState, Submitted, ConfirmationSent);
+            InstanceState(x => x.CurrentState, Submitted, InvitationCreated, ConfirmationSent);
             
             Event(() => UserCreated, x => x.CorrelateById(context => context.Message.UserId));
             Event(() => EmailConfirmationSent, x => x.CorrelateById(context => context.Message.UserId));
             Event(() => UserActivated, x => x.CorrelateById(context => context.Message.UserId));
+            Event(() => UserInvitationCreated, x => x.CorrelateById(context => context.Message.UserId));
 
             Initially(
                 When(UserCreated)
@@ -42,14 +45,24 @@ namespace Brutus.User.Sagas
             );
             
             WhenEnter(Submitted, 
-                context => context.Then(cx => cx.Publish(new Commands.V1.UserSendEmailConfirmation
+                context => context.Then(cx => cx.Publish(new Commands.V1.CreateUserInvitation
                 {
                     UserId = cx.Instance.CorrelationId,
                     Email = cx.Instance.Email
                 }))
             );
 
-            During(Submitted, When(EmailConfirmationSent).TransitionTo(ConfirmationSent));
+            During(Submitted,
+                When(UserInvitationCreated)
+                    .Publish(cx => new Commands.V1.UserSendEmailConfirmation
+                    {
+                        UserId = cx.Instance.CorrelationId,
+                        Email = cx.Instance.Email,
+                        InvitationId = cx.Data.InvitationId
+                    })
+                    .TransitionTo(InvitationCreated));
+
+            During(InvitationCreated, When(EmailConfirmationSent).TransitionTo(ConfirmationSent));
             During(ConfirmationSent, When(UserActivated).Finalize());
             
             SetCompletedWhenFinalized();

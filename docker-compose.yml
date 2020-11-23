@@ -8,7 +8,19 @@ services:
     environment:
       POSTGRES_DB: marten_testing
       POSTGRES_PASSWORD: postgres
-  
+      
+  dbmysql:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: brutus
+    volumes:
+        - dbdata:/var/lib/mysql
+
   adminer:
     image: adminer
     restart: always
@@ -21,3 +33,5 @@ services:
       - 5672:5672
       - 15672:15672
     
+volumes:
+  dbdata:

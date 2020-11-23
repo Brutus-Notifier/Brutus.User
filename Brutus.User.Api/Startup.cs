@@ -52,6 +52,8 @@ namespace Brutus.User.Api
             {
                 endpoints.MapControllers();
             });
+
+            app.UseBrutusService();
         }
     }
 }

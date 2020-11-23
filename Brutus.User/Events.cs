@@ -39,6 +39,17 @@ namespace Brutus.User
             }
 
             public class SuccessResponse { }
+
+            public class UserInvitationCreated
+            {
+                public UserInvitationCreated( Guid invitationId, Guid userId)
+                {
+                    UserId = userId;
+                    InvitationId = invitationId;
+                }
+                public Guid UserId { get; }
+                public Guid InvitationId { get; }
+            }
         }
     }
 }

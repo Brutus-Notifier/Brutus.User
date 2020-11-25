@@ -16,9 +16,11 @@ namespace Brutus.User
         public static void AddBrutusUserService(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IAggregateRepository<Domain.User>, MartenAggregateRepository<Domain.User>>();
-            services.AddScoped<IEmailService, StubEmailService>();
             services.AddScoped<QueryHandler>();
-            
+
+            var notificationMetadata = configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+            services.AddSingleton<IEmailService, EmailService>(x => new EmailService(notificationMetadata));
+
             services.AddMarten(settings =>
             {
                 var conStr = configuration.GetConnectionString("Marten");

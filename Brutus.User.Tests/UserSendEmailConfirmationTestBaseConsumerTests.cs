@@ -18,7 +18,7 @@ namespace Brutus.User.Tests
         public UserSendEmailConfirmationTestBaseConsumerTests()
         {
             Mock<IEmailService> emailServiceMock = new Mock<IEmailService>();
-            emailServiceMock.Setup(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(true));
+            emailServiceMock.Setup(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(true));
             
             _consumer = Harness.Consumer(() => new UserSendConfirmationEmailCommandHandler(emailServiceMock.Object));
         }

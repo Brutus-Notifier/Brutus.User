@@ -1,27 +1,18 @@
-using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace Brutus.User.Services
 {
     public interface IEmailService
     {
-        Task SendEmailAsync(string email, string body);
+        Task SendEmailAsync(string receiver, string subject, string content);
     }
-
-    public class StubEmailService : IEmailService
+    
+    public class EmailConfiguration 
     {
-        private readonly ILogger<StubEmailService> _logger;
-
-        public StubEmailService(ILogger<StubEmailService> logger)
-        {
-            _logger = logger;
-        }
-        public Task SendEmailAsync(string email, string body)
-        {
-            Console.WriteLine($"Email sent to: {email}. With body: {body}");
-            // _logger.LogDebug($"Email sent to: {email}. With body: {body}");
-            return Task.CompletedTask;
-        }
+        public string Sender { get; set; }
+        public string SmtpServer { get; set; }
+        public int Port { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
     }
 }

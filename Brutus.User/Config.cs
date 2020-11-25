@@ -1,14 +1,11 @@
 using Brutus.Core;
 using Brutus.User.CommandHandlers;
-using Brutus.User.Data;
 using Brutus.User.Sagas;
 using Brutus.User.Services;
 using Marten;
 using Marten.Schema;
 using Marten.Services.Events;
 using MassTransit;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -43,33 +40,13 @@ namespace Brutus.User
                 {
                     cfg.ConfigureEndpoints(context);
                 });
-                settings.AddRequestClient<Commands.V1.FinishUserRegistration>();
+                settings.AddRequestClient<Commands.V1.ConfirmUserRegistrationEmail>();
                 settings.AddRequestClient<Commands.V1.UserCreate>();
                 settings.AddRequestClient<Commands.V1.UserChangeName>();
                 settings.AddSagaStateMachine<UserRegistrationSaga, UserRegistrationState>()
                     .MartenRepository(conStr);
             });
             services.AddMassTransitHostedService();
-            
-            services.AddDbContext<UserInvitationDbContext>(options =>
-                options.UseMySQL(configuration.GetConnectionString("UserInvitation")));
-        }
-
-        public static void UseBrutusService(this IApplicationBuilder app)
-        {
-            UpgradeDatabase(app);
-        }
-        
-        private static void UpgradeDatabase(IApplicationBuilder app)
-        {
-            using (var serviceScope = app.ApplicationServices.CreateScope())
-            {
-                var context = serviceScope.ServiceProvider.GetService<UserInvitationDbContext>();
-                if (context != null && context.Database != null)
-                {
-                    context.Database.Migrate();
-                }
-            }
         }
     }
 }

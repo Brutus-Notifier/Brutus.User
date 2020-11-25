@@ -37,9 +37,9 @@ namespace Brutus.User.Api.Controllers
         }
 
         [HttpPost("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail(Commands.V1.FinishUserRegistration command)
+        public async Task<IActionResult> ConfirmEmail(Commands.V1.ConfirmUserRegistrationEmail command)
         {
-            var finishRegistrationClient = _clientFactory.CreateRequestClient<Commands.V1.FinishUserRegistration>();
+            var finishRegistrationClient = _clientFactory.CreateRequestClient<Commands.V1.ConfirmUserRegistrationEmail>();
             
             await finishRegistrationClient.GetResponse<Events.V1.RegistrationUserEmailConfirmed>(command);
             return NoContent();

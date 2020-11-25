@@ -38,7 +38,6 @@ namespace Brutus.User.Tests
             await RunTest(async () =>
             {
                 await Publish(new Domain.Events.V1.UserCreated(_userData.Id, _userData.Password, _userData.Email));
-                await Publish(new Events.V1.UserInvitationCreated(_invitationId, _userData.Id));
                 await Publish(new Events.V1.UserEmailConfirmationSent(_userData.Id, _userData.Email));
 
                 var instance = await FindMachineInstance(_userData.Id, StateMachine.ConfirmationSent);
@@ -58,7 +57,6 @@ namespace Brutus.User.Tests
             await RunTest(async () =>
             {
                 await Publish(new Domain.Events.V1.UserCreated(_userData.Id, _userData.Password, _userData.Email));
-                await Publish(new Events.V1.UserInvitationCreated(_invitationId, _userData.Id));
                 await Publish(new Events.V1.UserEmailConfirmationSent(_userData.Id, _userData.Email));
                 await Publish(new Domain.Events.V1.UserActivated(_userData.Id));
                 
@@ -76,7 +74,6 @@ namespace Brutus.User.Tests
             await RunTest(async () =>
             {
                 await Publish(new Domain.Events.V1.UserCreated(_userData.Id, _userData.Password, _userData.Email));
-                await Publish(new Events.V1.UserInvitationCreated(_invitationId, _userData.Id));
                 Assert.True(await Harness.Published.Any<Commands.V1.UserSendEmailConfirmation>());
             });
         }

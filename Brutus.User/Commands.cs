@@ -40,7 +40,12 @@ namespace Brutus.User
                 public string Email { get; set; }
             }
 
-            public class FinishUserRegistration : ICommand
+            public class ConfirmUserRegistrationEmail : ICommand
+            {
+                public Guid InvitationId { get; set; }
+            }
+
+            public class ActivateUser : ICommand
             {
                 public Guid UserId { get; set; }
             }

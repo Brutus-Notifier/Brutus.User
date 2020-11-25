@@ -10,10 +10,12 @@ namespace Brutus.User.Tests
     public class UserRegistrationTestBaseSagaTests: TestBaseSaga<UserRegistrationState, UserRegistrationSaga>
     {
         private readonly (Guid Id, string Password, string Email) _userData;
+        private readonly Guid _invitationId;
 
         public UserRegistrationTestBaseSagaTests()
         {
             _userData = (NewId.NextGuid(), "Testing123!", "test@email.com");
+            _invitationId = Guid.NewGuid();
         }
         
         [Fact]
@@ -36,6 +38,7 @@ namespace Brutus.User.Tests
             await RunTest(async () =>
             {
                 await Publish(new Domain.Events.V1.UserCreated(_userData.Id, _userData.Password, _userData.Email));
+                await Publish(new Events.V1.UserInvitationCreated(_invitationId, _userData.Id));
                 await Publish(new Events.V1.UserEmailConfirmationSent(_userData.Id, _userData.Email));
 
                 var instance = await FindMachineInstance(_userData.Id, StateMachine.ConfirmationSent);
@@ -55,6 +58,7 @@ namespace Brutus.User.Tests
             await RunTest(async () =>
             {
                 await Publish(new Domain.Events.V1.UserCreated(_userData.Id, _userData.Password, _userData.Email));
+                await Publish(new Events.V1.UserInvitationCreated(_invitationId, _userData.Id));
                 await Publish(new Events.V1.UserEmailConfirmationSent(_userData.Id, _userData.Email));
                 await Publish(new Domain.Events.V1.UserActivated(_userData.Id));
                 
@@ -72,6 +76,7 @@ namespace Brutus.User.Tests
             await RunTest(async () =>
             {
                 await Publish(new Domain.Events.V1.UserCreated(_userData.Id, _userData.Password, _userData.Email));
+                await Publish(new Events.V1.UserInvitationCreated(_invitationId, _userData.Id));
                 Assert.True(await Harness.Published.Any<Commands.V1.UserSendEmailConfirmation>());
             });
         }

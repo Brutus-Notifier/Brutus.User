@@ -31,9 +31,9 @@ namespace Brutus.User.Sagas
             InstanceState(x => x.CurrentState, Submitted, InvitationCreated, ConfirmationSent);
             
             Event(() => UserCreated, x => x.CorrelateById(context => context.Message.UserId));
+            Event(() => UserInvitationCreated, x => x.CorrelateById(context => context.Message.UserId));
             Event(() => EmailConfirmationSent, x => x.CorrelateById(context => context.Message.UserId));
             Event(() => UserActivated, x => x.CorrelateById(context => context.Message.UserId));
-            Event(() => UserInvitationCreated, x => x.CorrelateById(context => context.Message.UserId));
 
             Initially(
                 When(UserCreated)

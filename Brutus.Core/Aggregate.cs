@@ -8,7 +8,6 @@ namespace Brutus.Core
 {
     public abstract class Aggregate: Entity
     {
-        public int Version { get; set; }
         private readonly IList<object> _events = new List<object>();
         
         public ICollection<object> DequeueEvents()

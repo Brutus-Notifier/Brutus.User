@@ -9,8 +9,7 @@ namespace Brutus.Core
         
         protected void CheckNullOrEmpty(string paramValue, string paramName)
         {
-            if (string.IsNullOrWhiteSpace(paramValue))
-                throw new DomainException(GetType().Name, $"{paramName} could not be null or empty");
+            if (string.IsNullOrWhiteSpace(paramValue)) throw new DomainException(GetType().Name, $"{paramName} could not be null or empty");
         }
         
         protected void CheckMaxLength(int maxLength, string paramValue, string paramName)
